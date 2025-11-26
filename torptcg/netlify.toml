@@ -4,6 +4,12 @@
 
 
 
+# Ensure admin panel works
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200
+
 # Redirect everything else to index.html for SPA routing
 [[redirects]]
   from = "/*"
