@@ -11,5 +11,5 @@ description: The product is a rare and overnumbered Viktor card from the Origins
   is a highly sought-after collectable for fans and collectors of the game. This
   particular card, numbered 308 out of 298, is in near mint condition, making it
   a valuable addition to any collection.
-featured: true
+featured: false
 ---
