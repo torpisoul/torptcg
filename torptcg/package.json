@@ -3,9 +3,14 @@
   "version": "1.0.0",
   "description": "TorpTCG - Riftbound TCG Specialists",
   "scripts": {
-    "build": "node build-products.js"
+    "build": "node build-products.js",
+    "dev": "npm run build && npx http-server -p 8080 -c-1",
+    "watch": "node watch-products.js"
   },
   "dependencies": {
     "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
   }
 }

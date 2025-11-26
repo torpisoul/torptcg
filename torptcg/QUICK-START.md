@@ -1,74 +1,218 @@
-# 🚀 Quick Start Guide
+# TorpTCG Quick Start Guide
 
-## What Just Happened?
+## 🚀 Getting Started
 
-I've set up **Netlify CMS** for your TorpTCG site! This gives you a professional admin interface to manage products without touching code.
+This guide will help you manage your TorpTCG website and products.
 
-## ✅ Next Steps (Do These in Order)
+## Local Development
 
 ### 1. Install Dependencies
-
-Open your terminal in the `torptcg` folder and run:
-
 ```bash
 npm install
 ```
 
-### 2. Test the Build Locally
-
+### 2. Build Products Data
 ```bash
 npm run build
 ```
 
-This should create a `products-data.json` file.
+This command reads all markdown files in the `products/` folder and generates `products-data.json`.
 
-### 3. Push to GitHub
-
+### 3. Start Development Server
 ```bash
-git add .
-git commit -m "Add Netlify CMS for product management"
-git push origin main
+npm run dev
 ```
 
-### 4. Configure Netlify (IMPORTANT!)
+Visit `http://localhost:8080` to view your site.
 
-Go to https://app.netlify.com and:
+### 4. Watch for Product Changes (Optional)
+```bash
+npm run watch
+```
 
-1. Select your `torptcg` site
-2. Go to **Settings** → **Identity** → Click **Enable Identity**
-3. Under **Registration**, choose **Invite only**
-4. Go to **Services** → **Git Gateway** → Click **Enable Git Gateway**
+This automatically rebuilds `products-data.json` whenever you edit product markdown files.
 
-### 5. Invite Yourself as Admin
+## Managing Products
 
-1. In Netlify, go to the **Identity** tab
-2. Click **Invite users**
-3. Enter your email
-4. Check your email and set a password
+### Via Netlify CMS (Recommended)
 
-### 6. Access Your Admin Panel
-# note to self - this is where I'm up to
-Visit: `https://your-site.netlify.app/admin` 
+1. **Access the Admin Panel**
+   - Visit `https://your-site.netlify.app/admin/`
+   - Click "Login with GitHub"
+   - Authorize the application
 
-Log in and start managing products! 🎉
+2. **Add a New Product**
+   - Click "New Products"
+   - Fill in the form:
+     - **Title**: Product name
+     - **Category**: singles, sealed, accessories, or prints
+     - **Price**: Include currency symbol (e.g., £45.00)
+     - **Image**: Upload or provide URL
+     - **Stock Status**: In Stock, Low Stock, Out of Stock, or Made to Order
+     - **Description**: Optional product description
+     - **Featured**: Check to feature on homepage
+   - Click "Publish"
 
-## 📝 What You Can Do Now
+3. **Edit a Product**
+   - Click on the product in the list
+   - Make your changes
+   - Click "Publish"
 
-- ✅ Add products through a visual interface
-- ✅ Upload product images
-- ✅ Edit existing products
-- ✅ Delete products
-- ✅ Changes are saved to GitHub
-- ✅ All visitors see the same products
+4. **Delete a Product**
+   - Click on the product
+   - Click "Delete entry"
+   - Confirm deletion
 
-## 🗑️ Files You Can Delete
+### Via Markdown Files (Advanced)
 
-- `admin.html` (the old admin page - no longer needed)
+Products are stored as markdown files in the `products/` folder.
 
-## 📖 Full Documentation
-
-See `NETLIFY-CMS-SETUP.md` for detailed instructions and troubleshooting.
-
+**Example: `products/my-product.md`**
+```markdown
 ---
+title: "Riftbound: Origins Booster Box"
+category: "sealed"
+price: "£120.00"
+image: "https://example.com/image.jpg"
+stock: "In Stock"
+description: "24 booster packs of the highly sought-after Origins set"
+featured: true
+---
+```
 
-**Questions?** Just ask! I'm here to help.
+After editing, run `npm run build` to regenerate the JSON file.
+
+## Categories
+
+Your site supports four product categories:
+
+- **singles**: Individual trading cards
+- **sealed**: Booster boxes, starter decks, etc.
+- **accessories**: Plushies, playmats, etc.
+- **prints**: 3D printed items (deck boxes, miniatures, etc.)
+
+## Stock Status Options
+
+- **In Stock**: Product is available
+- **Low Stock**: Limited quantity remaining
+- **Out of Stock**: Currently unavailable
+- **Made to Order**: Custom/bespoke items
+
+## Homepage Filters
+
+The homepage has filter buttons that automatically work with your product categories:
+- **All**: Shows all products
+- **Singles**: Shows only single cards
+- **Sealed**: Shows only sealed products
+- **Accessories**: Shows only accessories
+- **3D Prints**: Shows only 3D printed items
+
+## Deployment
+
+### Deploying to Netlify
+
+1. **Push to GitHub**
+   ```bash
+   git add .
+   git commit -m "Update products"
+   git push
+   ```
+
+2. **Automatic Deployment**
+   - Netlify detects the push
+   - Runs `npm run build`
+   - Deploys your site
+   - Products automatically update!
+
+### Build Process
+
+When Netlify builds your site:
+1. Runs `npm run build`
+2. Reads all `.md` files in `products/`
+3. Generates `products-data.json`
+4. Homepage loads products from this JSON file
+
+## Admin Access
+
+### Who Can Access the Admin Panel?
+
+Anyone with **write access** to your GitHub repository can log in to `/admin/`.
+
+### Adding Admin Users
+
+1. Go to your GitHub repository
+2. Click "Settings" → "Collaborators"
+3. Click "Add people"
+4. Enter their GitHub username
+5. They can now access `/admin/`
+
+### Removing Admin Users
+
+1. Go to repository settings → Collaborators
+2. Click "Remove" next to their name
+
+## File Structure
+
+```
+torptcg/
+├── admin/
+│   ├── config.yml          # Netlify CMS configuration
+│   └── index.html          # CMS admin interface
+├── products/               # Product markdown files
+│   ├── product-1.md
+│   ├── product-2.md
+│   └── ...
+├── images/
+│   └── uploads/           # Uploaded product images
+├── index.html             # Homepage
+├── admin.html             # Admin landing page
+├── script.js              # Frontend JavaScript
+├── styles.css             # Styles
+├── build-products.js      # Build script
+├── watch-products.js      # File watcher
+├── products-data.json     # Generated product data
+├── package.json           # Dependencies
+└── netlify.toml           # Netlify configuration
+```
+
+## Troubleshooting
+
+### Products not showing on homepage?
+1. Check `products-data.json` exists
+2. Run `npm run build`
+3. Check browser console for errors
+
+### Can't log in to admin panel?
+1. Ensure you have write access to the GitHub repository
+2. Check that `admin/config.yml` has the correct repo name
+3. Try clearing browser cache
+
+### Images not loading?
+1. Check image URLs are correct
+2. For uploaded images, ensure they're in `images/uploads/`
+3. Check browser console for 404 errors
+
+### Filters not working?
+1. Ensure product categories match exactly: singles, sealed, accessories, prints
+2. Check browser console for JavaScript errors
+3. Clear browser cache and reload
+
+## Important Notes
+
+⚠️ **Before deploying to production:**
+1. Update `admin/config.yml` with your correct GitHub repository name
+2. Test the admin panel on Netlify (it won't work locally)
+3. Ensure at least one product exists for testing
+
+✅ **Best Practices:**
+- Always use the correct category names (lowercase)
+- Include currency symbols in prices (£, $, €)
+- Use high-quality product images (recommended: 400x400px minimum)
+- Write clear, concise product descriptions
+- Keep product titles under 50 characters for best display
+
+## Need Help?
+
+- **Netlify CMS Docs**: https://decapcms.org/
+- **GitHub OAuth**: See `GITHUB-OAUTH-MIGRATION.md`
+- **Build Issues**: Check Netlify build logs in your dashboard

@@ -1,9 +1,0 @@
----
-title: "Riftbound: Origins Booster Box"
-category: "sealed"
-price: "£120.00"
-image: "https://images.unsplash.com/photo-1620336655055-088d06e36bf0?auto=format&fit=crop&w=400&q=80"
-stock: "In Stock"
-description: "24 booster packs of the highly sought-after Origins set"
-featured: true
----

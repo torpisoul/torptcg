@@ -1,6 +1,7 @@
 backend:
   name: git-gateway
-  branch: main # or master, depending on your default branch
+  branch: main
+local_backend: true
 
 media_folder: "images/uploads" # Where uploaded images will be stored
 public_folder: "/images/uploads" # Public URL path for images

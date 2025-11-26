@@ -4,80 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TorpTCG Admin - Stock Management</title>
+    <title>TorpTCG Admin - Product Management</title>
     <link rel="stylesheet" href="styles.css">
     <style>
         body {
             background-color: #1a1a1a;
             color: #fff;
             padding-top: 50px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .admin-container {
             max-width: 600px;
             margin: 0 auto;
             background: #2a2a2a;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             border: 1px solid #333;
+            text-align: center;
         }
 
         h1 {
-            text-align: center;
             color: #a29bfe;
             margin-bottom: 20px;
+            font-size: 2rem;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
+        .info-text {
             color: #ccc;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            line-height: 1.6;
         }
 
-        input,
-        select {
-            width: 100%;
-            padding: 10px;
-            background: #333;
-            border: 1px solid #444;
-            color: #fff;
-            border-radius: 4px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
+        .btn {
+            padding: 12px 30px;
             background: #6c5ce7;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 1rem;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        button:hover {
+        .btn:hover {
             background: #5641e5;
-        }
-
-        .success-msg {
-            color: #00b894;
-            text-align: center;
-            margin-top: 10px;
-            display: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
         }
 
         .back-link {
             display: block;
-            text-align: center;
-            margin-top: 20px;
+            margin-top: 30px;
             color: #a29bfe;
             text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #6c5ce7;
+        }
+
+        .feature-list {
+            text-align: left;
+            margin: 30px 0;
+            padding: 0 20px;
+        }
+
+        .feature-list li {
+            margin-bottom: 12px;
+            color: #ccc;
         }
     </style>
 </head>
@@ -85,73 +88,29 @@
 <body>
 
     <div class="admin-container">
-        <h1>📦 Stock Management</h1>
-        <form id="addProductForm">
-            <div class="form-group">
-                <label>Product Title</label>
-                <input type="text" id="title" required placeholder="e.g. Riftbound Booster Box">
-            </div>
+        <h1>🔐 TorpTCG Admin</h1>
 
-            <div class="form-group">
-                <label>Category</label>
-                <select id="category">
-                    <option value="singles">Single Card</option>
-                    <option value="sealed">Sealed Product</option>
-                    <option value="accessories">Accessory</option>
-                    <option value="prints">3D Print</option>
-                </select>
-            </div>
+        <p class="info-text">
+            Welcome to the TorpTCG Product Management System powered by Netlify CMS.
+        </p>
 
-            <div class="form-group">
-                <label>Price (£)</label>
-                <input type="text" id="price" required placeholder="e.g. 24.99">
-            </div>
+        <p class="info-text">
+            To access the admin panel, you'll need to authenticate with your GitHub account.
+            This ensures secure access to product management.
+        </p>
 
-            <div class="form-group">
-                <label>Image URL</label>
-                <input type="url" id="image" required placeholder="https://...">
-            </div>
+        <ul class="feature-list">
+            <li>✅ Add new products</li>
+            <li>✅ Edit existing products</li>
+            <li>✅ Delete products</li>
+            <li>✅ Upload product images</li>
+            <li>✅ Manage stock status</li>
+        </ul>
 
-            <div class="form-group">
-                <label>Stock Status</label>
-                <select id="stock">
-                    <option value="In Stock">In Stock</option>
-                    <option value="Low Stock">Low Stock</option>
-                    <option value="Made to Order">Made to Order</option>
-                    <option value="Out of Stock">Out of Stock</option>
-                </select>
-            </div>
-
-            <button type="submit">Add Product</button>
-            <p class="success-msg" id="successMsg">Product added successfully!</p>
-        </form>
+        <a href="/admin/" class="btn">Access Admin Panel</a>
         <a href="index.html" class="back-link">← Back to Shop</a>
     </div>
 
-    <script src="script.js"></script>
-    <script>
-        document.getElementById('addProductForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const newProduct = {
-                id: Date.now(), // Simple unique ID
-                title: document.getElementById('title').value,
-                category: document.getElementById('category').value,
-                price: '£' + document.getElementById('price').value.replace('£', ''),
-                image: document.getElementById('image').value,
-                stock: document.getElementById('stock').value
-            };
-
-            // Use the function from script.js (we will add this next)
-            addProduct(newProduct);
-
-            // Show success and reset
-            const msg = document.getElementById('successMsg');
-            msg.style.display = 'block';
-            this.reset();
-            setTimeout(() => msg.style.display = 'none', 3000);
-        });
-    </script>
 </body>
 
 </html>

@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TorpTCG | Riftbound Specialists & Custom Prints</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 
 <body>
@@ -114,25 +113,142 @@
     <footer>
         <h3>TORPTCG LTD</h3>
         <p>Specialists in Riftbound & Tabletop Accessories</p>
-        <div class="legal-text">
-            <p>&copy; 2024 TorpTCG. All rights reserved.</p>
-            <p>Riftbound™ is a trademark of its respective owners. We are an independent retailer.</p>
-        </div>
-    </footer>
+        <!DOCTYPE html>
+        <html lang="en">
 
-    <script src="script.js"></script>
-    <script>
-        // Netlify Identity redirect handling
-        if (window.netlifyIdentity) {
-            window.netlifyIdentity.on("init", user => {
-                if (!user) {
-                    window.netlifyIdentity.on("login", () => {
-                        document.location.href = "/admin/";
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>TorpTCG | Riftbound Specialists & Custom Prints</title>
+            <link rel="stylesheet" href="styles.css">
+        </head>
+
+        <body>
+
+            <!-- NAVIGATION -->
+            <nav>
+                <div class="logo">TORPTCG</div>
+                <div class="nav-links">
+                    <a href="#products">Shop</a>
+                    <a href="#services">Bespoke Models</a>
+                    <a href="#contact">Contact</a>
+                </div>
+            </nav>
+
+            <!-- HERO SECTION -->
+            <div class="hero">
+                <h1>Enter the Rift</h1>
+                <p>The UK's Premier Destination for Riftbound TCG, Sealed Product, and Bespoke 3D Accessories.</p>
+                <a href="#products" class="btn">Explore the Collection</a>
+            </div>
+
+            <!-- MAIN PRODUCT SECTION -->
+            <div class="container" id="products">
+                <h2 class="section-title">New Arrivals</h2>
+
+                <!-- Filter Buttons -->
+                <div class="filters">
+                    <button class="filter-btn active" onclick="filterProducts('all')">All</button>
+                    <button class="filter-btn" onclick="filterProducts('singles')">Singles</button>
+                    <button class="filter-btn" onclick="filterProducts('sealed')">Sealed</button>
+                    <button class="filter-btn" onclick="filterProducts('accessories')">Accessories</button>
+                    <button class="filter-btn" onclick="filterProducts('prints')">3D Prints</button>
+                </div>
+
+                <!-- Product Grid -->
+                <div class="product-grid" id="product-container">
+                    <!-- Products injected via script.js -->
+                </div>
+            </div>
+
+            <!-- SERVICES SECTION -->
+            <div class="services-section" id="services">
+                <div class="container">
+                    <h2 class="section-title">Bespoke 3D Modeling</h2>
+                    <div style="display: flex; flex-wrap: wrap; gap: 50px; align-items: center;">
+                        <div style="flex: 1; min-width: 300px;">
+                            <h3 style="color: var(--accent); margin-bottom: 20px; font-size: 1.8rem;">Your Vision,
+                                Realized</h3>
+                            <p style="margin-bottom: 20px; color: var(--text-muted);">
+                                Whether you need a custom commander for your deck, a unique deck box, or a full set of
+                                terrain
+                                for your tabletop battles, TorpTCG brings your ideas to life.
+                            </p>
+                            <ul style="margin-bottom: 30px; list-style: none;">
+                                <li style="margin-bottom: 10px;">✨ Custom Sculpted Miniatures</li>
+                                <li style="margin-bottom: 10px;">✨ High-Detail SLA Resin Printing</li>
+                                <li style="margin-bottom: 10px;">✨ Durable FDM Deck Boxes & Dice Towers</li>
+                                <li style="margin-bottom: 10px;">✨ Professional Painting Services Available</li>
+                            </ul>
+                            <a href="#contact" class="btn">Request a Quote</a>
+                        </div>
+                        <div style="flex: 1; min-width: 300px;">
+                            <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80"
+                                alt="3D Printing"
+                                style="width: 100%; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTACT FORM -->
+            <div class="container" id="contact">
+                <h2 class="section-title">Contact Us</h2>
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <p style="text-align: center; margin-bottom: 30px; color: var(--text-muted);">
+                        Looking for a specific card or want to commission a model? Drop us a message.
+                    </p>
+
+                    <form class="contact-form"
+                        style="background: var(--bg-card); padding: 40px; border-radius: 16px; border: 1px solid var(--glass-border);">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" required placeholder="Your Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" required placeholder="your@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Enquiry Type</label>
+                            <select>
+                                <option value="stock">Stock Request</option>
+                                <option value="commission">3D Print Commission</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea rows="5" placeholder="Tell us what you need..."></textarea>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Send Message</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <footer>
+                <h3>TORPTCG LTD</h3>
+                <p>Specialists in Riftbound & Tabletop Accessories</p>
+                <div class="legal-text">
+                    <p>&copy; 2024 TorpTCG. All rights reserved.</p>
+                    <p>Riftbound™ is a trademark of its respective owners. We are an independent retailer.</p>
+                </div>
+            </footer>
+
+            <script src="script.js"></script>
+            <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+            <script>
+                if (window.netlifyIdentity) {
+                    window.netlifyIdentity.on("init", user => {
+                        if (!user) {
+                            window.netlifyIdentity.on("login", () => {
+                                document.location.href = "/admin/";
+                            });
+                        }
                     });
                 }
-            });
-        }
-    </script>
-</body>
+            </script>
+        </body>
 
-</html>
+        </html>
