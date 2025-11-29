@@ -9,55 +9,57 @@ const { EXTERNAL_JSON_URL } = require('./config.js');
 const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY;
 
 exports.handler = async function (event, context) {
+    console.log("Inventory function invoked");
+    console.log("Method:", event.httpMethod);
+
     const method = event.httpMethod;
     const headers = {
         "Content-Type": "application/json",
         "Cache-Control": "no-cache, no-store, must-revalidate",
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "*", // CORS support
+        "Access-Control-Allow-Headers": "Content-Type"
     };
+
+    // Handle OPTIONS request for CORS
+    if (method === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers,
+            body: ''
+        };
+    }
 
     try {
         // ============================================
         // GET: Fetch current inventory
         // ============================================
         if (method === 'GET') {
-            console.log('[INVENTORY] Fetching from:', EXTERNAL_JSON_URL);
-            console.log('[INVENTORY] API Key present:', !!JSONBIN_API_KEY);
+            console.log("Fetching from:", EXTERNAL_JSON_URL);
 
-            const fetchHeaders = {};
+            const fetchOptions = {
+                headers: {}
+            };
+
             if (JSONBIN_API_KEY) {
-                fetchHeaders['X-Access-Key'] = JSONBIN_API_KEY;
+                fetchOptions.headers['X-Access-Key'] = JSONBIN_API_KEY;
             }
 
-            console.log('[INVENTORY] Fetch headers:', Object.keys(fetchHeaders));
-
-            const response = await fetch(EXTERNAL_JSON_URL, {
-                headers: fetchHeaders
-            });
-
-            console.log('[INVENTORY] JSONBin response status:', response.status);
+            const response = await fetch(EXTERNAL_JSON_URL, fetchOptions);
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('[INVENTORY] JSONBin error:', response.status, errorText);
+                console.error('Failed to fetch from JSONBin:', response.status, response.statusText);
+                const text = await response.text();
+                console.error('Response body:', text);
                 return {
                     statusCode: 502,
                     headers,
-                    body: JSON.stringify({
-                        error: "Failed to fetch inventory data",
-                        status: response.status,
-                        details: errorText
-                    })
+                    body: JSON.stringify({ error: "Failed to fetch inventory data", details: text })
                 };
             }
 
             const data = await response.json();
-            console.log('[INVENTORY] Data received, has record:', !!data.record);
-
             // JSONBin wraps data in 'record' property
             const inventory = data?.record ?? data;
-
-            console.log('[INVENTORY] Returning inventory with', inventory.products?.length || 0, 'products');
 
             return {
                 statusCode: 200,
@@ -91,14 +93,14 @@ exports.handler = async function (event, context) {
             }
 
             // Fetch current inventory
-            const fetchHeaders = {};
+            const fetchOptions = {
+                headers: {}
+            };
             if (JSONBIN_API_KEY) {
-                fetchHeaders['X-Access-Key'] = JSONBIN_API_KEY;
+                fetchOptions.headers['X-Access-Key'] = JSONBIN_API_KEY;
             }
 
-            const fetchResponse = await fetch(EXTERNAL_JSON_URL, {
-                headers: fetchHeaders
-            });
+            const fetchResponse = await fetch(EXTERNAL_JSON_URL, fetchOptions);
 
             if (!fetchResponse.ok) {
                 return {
@@ -155,16 +157,12 @@ exports.handler = async function (event, context) {
             const binId = EXTERNAL_JSON_URL.split('/').pop();
             const updateUrl = `https://api.jsonbin.io/v3/b/${binId}`;
 
-            const updateHeaders = {
-                'Content-Type': 'application/json'
-            };
-            if (JSONBIN_API_KEY) {
-                updateHeaders['X-Access-Key'] = JSONBIN_API_KEY;
-            }
-
             const updateResponse = await fetch(updateUrl, {
                 method: 'PUT',
-                headers: updateHeaders,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Access-Key': JSONBIN_API_KEY || ''
+                },
                 body: JSON.stringify(inventory)
             });
 
@@ -206,15 +204,14 @@ exports.handler = async function (event, context) {
         };
 
     } catch (err) {
-        console.error("[INVENTORY] Error:", err.message);
-        console.error("[INVENTORY] Stack:", err.stack);
+        console.error("Error in inventory function:", err);
         return {
             statusCode: 500,
             headers,
             body: JSON.stringify({
                 error: "Internal server error",
                 message: err.message,
-                stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+                stack: err.stack
             })
         };
     }
