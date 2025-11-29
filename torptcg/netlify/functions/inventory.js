@@ -2,6 +2,7 @@
 // Handles both GET (read inventory) and POST (update stock) operations
 // Provides atomic stock management with concurrency control
 
+const fetch = require('node-fetch');
 const { EXTERNAL_JSON_URL } = require('./config.js');
 
 // Environment variable for JSONBin API key (set in Netlify dashboard)

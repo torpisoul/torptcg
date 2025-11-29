@@ -8,7 +8,8 @@
     "watch": "node watch-products.js"
   },
   "dependencies": {
-    "gray-matter": "^4.0.3"
+    "gray-matter": "^4.0.3",
+    "node-fetch": "^2.7.0"
   },
   "devDependencies": {
     "http-server": "^14.1.1"
