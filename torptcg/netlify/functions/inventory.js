@@ -3,10 +3,10 @@
 // Uses native https module to avoid dependency issues
 
 const https = require('https');
-const { EXTERNAL_JSON_URL } = require('./config.js');
+const { EXTERNAL_JSON_URL, JSONBIN_API_KEY: CONFIG_API_KEY } = require('./config.js');
 
-// Environment variable for JSONBin API key (set in Netlify dashboard)
-const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY;
+// Environment variable for JSONBin API key (set in Netlify dashboard) or fallback to config
+const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY || CONFIG_API_KEY;
 
 // Helper function to make HTTP requests
 function makeRequest(url, options, bodyData) {
