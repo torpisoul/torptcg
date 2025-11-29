@@ -1,75 +1,163 @@
-// 1. FETCH PRODUCTS FROM MARKDOWN FILES
+// ============================================
+// 1. INVENTORY MANAGEMENT SYSTEM
+// ============================================
+
+// Fetch products from inventory endpoint
 async function fetchProducts() {
     try {
-        // Fetch the products directory listing
-        const response = await fetch('/.netlify/functions/products');
+        const response = await fetch('/.netlify/functions/inventory');
         if (!response.ok) {
-            console.warn('Products data file not found, using fallback data');
+            console.warn('Inventory data not available, using fallback data');
             return getFallbackProducts();
         }
-        const products = await response.json();
+        const data = await response.json();
+        // Handle both array and object with products property
+        const products = Array.isArray(data) ? data : (data.products || []);
         return products;
     } catch (error) {
-        console.error('Error loading products:', error);
+        console.error('Error loading inventory:', error);
         return getFallbackProducts();
     }
 }
 
-// Fallback products if the JSON file doesn't exist yet
+// Update stock for a product (for checkout/purchase)
+async function updateStock(productId, quantity) {
+    try {
+        const response = await fetch('/.netlify/functions/inventory', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                productId: productId,
+                delta: -quantity // Negative for purchase
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            if (response.status === 409) {
+                // Insufficient stock
+                return { success: false, error: 'insufficient_stock', data: result };
+            }
+            return { success: false, error: 'update_failed', data: result };
+        }
+
+        return { success: true, data: result };
+    } catch (error) {
+        console.error('Error updating stock:', error);
+        return { success: false, error: 'network_error' };
+    }
+}
+
+// Fallback products if the inventory system is not available
 function getFallbackProducts() {
     return [
         {
-            id: 1,
+            id: "p001",
             title: "Riftbound: Origins Booster Box",
             category: "sealed",
-            price: "£120.00",
+            price: 120.00,
             image: "https://images.unsplash.com/photo-1620336655055-088d06e36bf0?auto=format&fit=crop&w=400&q=80",
-            stock: "In Stock"
+            stock: 15,
+            available: true
         },
         {
-            id: 2,
+            id: "p002",
             title: "Void Walker (Ultra Rare)",
             category: "singles",
-            price: "£45.00",
+            price: 45.00,
             image: "https://images.unsplash.com/photo-1601987177651-8edfe6c20009?auto=format&fit=crop&w=400&q=80",
-            stock: "Low Stock"
+            stock: 3,
+            available: true
         },
         {
-            id: 3,
+            id: "p003",
             title: "Custom Resin Deck Box (Dragon)",
             category: "prints",
-            price: "£35.00",
+            price: 35.00,
             image: "https://images.unsplash.com/photo-1615815707923-2d1d9a637276?auto=format&fit=crop&w=400&q=80",
-            stock: "Made to Order"
+            stock: 0,
+            available: true,
+            preOrder: true
         },
         {
-            id: 4,
+            id: "p004",
             title: "Riftbound Starter Deck: Aether",
             category: "sealed",
-            price: "£14.99",
+            price: 14.99,
             image: "https://images.unsplash.com/photo-1607462109225-6b64ae2dd3cb?auto=format&fit=crop&w=400&q=80",
-            stock: "In Stock"
+            stock: 25,
+            available: true
         },
         {
-            id: 5,
+            id: "p005",
             title: "Chibi Voidling Plushie",
             category: "accessories",
-            price: "£18.00",
+            price: 18.00,
             image: "https://images.unsplash.com/photo-1559479014-48e5da45043b?auto=format&fit=crop&w=400&q=80",
-            stock: "In Stock"
+            stock: 12,
+            available: true
         },
         {
-            id: 6,
+            id: "p006",
             title: "Bespoke Hero Miniature (Painted)",
             category: "prints",
-            price: "£50.00",
+            price: 50.00,
             image: "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?auto=format&fit=crop&w=400&q=80",
-            stock: "Made to Order"
+            stock: 0,
+            available: true,
+            preOrder: true
         }
     ];
 }
 
-// 2. CORE FUNCTIONS
+// ============================================
+// 2. STOCK DISPLAY HELPERS
+// ============================================
+
+// Get stock status text
+function getStockStatus(product) {
+    const stock = product.stock || 0;
+
+    if (stock === 0) {
+        if (product.preOrder || product.available) {
+            return "Made to Order";
+        }
+        return "Out of Stock";
+    }
+
+    if (stock <= 5) {
+        return `Only ${stock} left!`;
+    }
+
+    return "In Stock";
+}
+
+// Get stock badge class for styling
+function getStockClass(product) {
+    const stock = product.stock || 0;
+
+    if (stock === 0 && !product.preOrder && !product.available) {
+        return 'stock-out';
+    }
+
+    if (stock <= 5) {
+        return 'stock-low';
+    }
+
+    return 'stock-in';
+}
+
+// Check if product can be purchased
+function canPurchase(product) {
+    return product.available !== false && (product.stock > 0 || product.preOrder === true);
+}
+
+// ============================================
+// 3. RENDER FUNCTIONS
+// ============================================
 
 // Render products to the DOM
 async function renderProducts(filter = 'all') {
@@ -92,17 +180,24 @@ async function renderProducts(filter = 'all') {
     }
 
     filteredProducts.forEach(product => {
+        const stockStatus = getStockStatus(product);
+        const stockClass = getStockClass(product);
+        const purchasable = canPurchase(product);
+        const priceDisplay = typeof product.price === 'number' ? `£${product.price.toFixed(2)}` : product.price;
+
         const cardHTML = `
-            <div class="product-card" data-aos="fade-up">
+            <div class="product-card" data-product-id="${product.id}" data-aos="fade-up">
                 <div class="card-image-wrapper">
                     <img src="${product.image}" alt="${product.title}" class="product-image">
                     <span class="category-tag">${getCategoryName(product.category)}</span>
                 </div>
                 <div class="product-details">
-                    <div class="stock-badge ${getStockClass(product.stock)}">${product.stock}</div>
+                    <div class="stock-badge ${stockClass}">${stockStatus}</div>
                     <h3 class="product-title">${product.title}</h3>
-                    <div class="product-price">${product.price}</div>
-                    <button class="btn-add">Add to Cart</button>
+                    <div class="product-price">${priceDisplay}</div>
+                    <button class="btn-add" ${!purchasable ? 'disabled' : ''} onclick="handleAddToCart('${product.id}')">
+                        ${purchasable ? 'Add to Cart' : 'Unavailable'}
+                    </button>
                 </div>
             </div>
         `;
@@ -124,14 +219,66 @@ function getCategoryName(cat) {
     return map[cat] || cat;
 }
 
-// Helper for stock classes
-function getStockClass(stock) {
-    if (stock.includes('Low')) return 'stock-low';
-    if (stock.includes('Out')) return 'stock-out';
-    return 'stock-in';
+// ============================================
+// 4. CART & CHECKOUT FUNCTIONS
+// ============================================
+
+// Handle add to cart with stock validation
+async function handleAddToCart(productId) {
+    // Fetch current inventory to validate stock
+    const products = await fetchProducts();
+    const product = products.find(p => p.id === productId);
+
+    if (!product) {
+        alert('Product not found. Please refresh the page.');
+        return;
+    }
+
+    if (!canPurchase(product)) {
+        alert('This product is currently unavailable.');
+        return;
+    }
+
+    // For now, just show a confirmation
+    // In a real implementation, you would add to cart and update on checkout
+    const confirmed = confirm(`Add "${product.title}" to cart?\n\nPrice: £${typeof product.price === 'number' ? product.price.toFixed(2) : product.price}\nStock: ${product.stock > 0 ? product.stock + ' available' : 'Made to order'}`);
+
+    if (confirmed) {
+        // Simulate checkout - in production, this would happen at checkout
+        const result = await updateStock(productId, 1);
+
+        if (result.success) {
+            alert('✅ Added to cart! Stock updated.');
+            // Refresh the product display
+            const currentFilter = document.querySelector('.filter-btn.active')?.textContent.toLowerCase() || 'all';
+            renderProducts(currentFilter === 'all' ? 'all' : getCurrentFilterCategory());
+        } else {
+            if (result.error === 'insufficient_stock') {
+                alert('❌ Sorry, this item is now out of stock. The page will refresh.');
+                renderProducts(getCurrentFilterCategory());
+            } else {
+                alert('❌ Unable to add to cart. Please try again.');
+            }
+        }
+    }
 }
 
-// 3. EVENT LISTENERS
+// Get current filter category
+function getCurrentFilterCategory() {
+    const activeBtn = document.querySelector('.filter-btn.active');
+    if (!activeBtn) return 'all';
+
+    const onclick = activeBtn.getAttribute('onclick');
+    if (!onclick) return 'all';
+
+    const match = onclick.match(/filterProducts\('(.+?)'\)/);
+    return match ? match[1] : 'all';
+}
+
+// ============================================
+// 5. FILTER FUNCTIONS
+// ============================================
+
 function filterProducts(category) {
     // Update active button state
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -150,6 +297,10 @@ function filterProducts(category) {
 
     renderProducts(category);
 }
+
+// ============================================
+// 6. 3D TILT EFFECT
+// ============================================
 
 // 3D Tilt Effect with Dynamic Holographic Shine
 function initTiltEffect() {
@@ -217,6 +368,10 @@ function initTiltEffect() {
         });
     });
 }
+
+// ============================================
+// 7. INITIALIZATION
+// ============================================
 
 // Initial Render
 document.addEventListener('DOMContentLoaded', () => {

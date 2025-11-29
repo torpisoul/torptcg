@@ -1,0 +1,177 @@
+{
+    "products": [
+        {
+            "id": "rb-box-001",
+            "title": "Riftbound: Origins Booster Box",
+            "category": "sealed",
+            "price": 119.99,
+            "image": "https://images.unsplash.com/photo-1620336655055-088d06e36bf0?auto=format&fit=crop&w=400&q=80",
+            "stock": 12,
+            "available": true,
+            "description": "Complete booster box containing 36 packs of Riftbound: Origins. Each pack contains 10 cards including at least 1 rare or better."
+        },
+        {
+            "id": "rb-single-jinx",
+            "title": "Jinx (Legend - Ultra Rare)",
+            "category": "singles",
+            "price": 45.00,
+            "image": "https://images.unsplash.com/photo-1601987177651-8edfe6c20009?auto=format&fit=crop&w=400&q=80",
+            "stock": 3,
+            "available": true,
+            "description": "Jinx Demolitionist - Ultra Rare Legend card from Riftbound: Origins. Mint condition."
+        },
+        {
+            "id": "rb-single-viktor",
+            "title": "Viktor (Legend - Ultra Rare)",
+            "category": "singles",
+            "price": 52.00,
+            "image": "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=400&q=80",
+            "stock": 2,
+            "available": true,
+            "description": "Viktor - Ultra Rare Legend card from Riftbound: Origins. Near mint condition."
+        },
+        {
+            "id": "rb-single-ahri",
+            "title": "Ahri (Legend - Rare)",
+            "category": "singles",
+            "price": 28.00,
+            "image": "https://images.unsplash.com/photo-1611329857570-f02f340e7378?auto=format&fit=crop&w=400&q=80",
+            "stock": 7,
+            "available": true,
+            "description": "Ahri - Rare Legend card from Riftbound: Origins. Excellent condition."
+        },
+        {
+            "id": "rb-single-leesin",
+            "title": "Lee Sin (Legend - Rare)",
+            "category": "singles",
+            "price": 32.00,
+            "image": "https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?auto=format&fit=crop&w=400&q=80",
+            "stock": 5,
+            "available": true,
+            "description": "Lee Sin - Rare Legend card from Riftbound: Origins. Near mint."
+        },
+        {
+            "id": "rb-single-yasuo",
+            "title": "Yasuo (Legend - Rare)",
+            "category": "singles",
+            "price": 35.00,
+            "image": "https://images.unsplash.com/photo-1578632292335-df3abbb0d586?auto=format&fit=crop&w=400&q=80",
+            "stock": 4,
+            "available": true,
+            "description": "Yasuo - Rare Legend card from Riftbound: Origins. Mint condition."
+        },
+        {
+            "id": "rb-single-volibear",
+            "title": "Volibear Furious (Legend - Rare)",
+            "category": "singles",
+            "price": 29.00,
+            "image": "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=400&q=80",
+            "stock": 6,
+            "available": true,
+            "description": "Volibear Furious - Rare Legend card from Riftbound: Origins."
+        },
+        {
+            "id": "rb-single-disintegrate",
+            "title": "Disintegrate (Spell - Uncommon)",
+            "category": "singles",
+            "price": 3.50,
+            "image": "https://images.unsplash.com/photo-1620503374956-c942862f0372?auto=format&fit=crop&w=400&q=80",
+            "stock": 24,
+            "available": true,
+            "description": "Disintegrate - Powerful spell card. Uncommon from Origins set."
+        },
+        {
+            "id": "rb-single-hextech",
+            "title": "Hextech Ray (Spell - Rare)",
+            "category": "singles",
+            "price": 8.00,
+            "image": "https://images.unsplash.com/photo-1614732414444-096e5f1122d5?auto=format&fit=crop&w=400&q=80",
+            "stock": 15,
+            "available": true,
+            "description": "Hextech Ray - Rare spell card from Riftbound: Origins."
+        },
+        {
+            "id": "rb-acc-deckbox-dragon",
+            "title": "Custom Resin Deck Box (Dragon)",
+            "category": "accessories",
+            "price": 35.00,
+            "image": "https://images.unsplash.com/photo-1615815707923-2d1d9a637276?auto=format&fit=crop&w=400&q=80",
+            "stock": 0,
+            "available": true,
+            "preOrder": true,
+            "description": "Custom 3D printed resin deck box with dragon design. Holds 100+ sleeved cards. Made to order - 5-7 day turnaround."
+        },
+        {
+            "id": "rb-acc-sleeves-premium",
+            "title": "Premium Card Sleeves (100-pack)",
+            "category": "accessories",
+            "price": 12.99,
+            "image": "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=400&q=80",
+            "stock": 45,
+            "available": true,
+            "description": "High-quality card sleeves. Perfect fit for Riftbound TCG cards. 100 sleeves per pack."
+        },
+        {
+            "id": "rb-acc-playmat",
+            "title": "Riftbound Official Playmat",
+            "category": "accessories",
+            "price": 24.99,
+            "image": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80",
+            "stock": 18,
+            "available": true,
+            "description": "Official Riftbound playmat featuring stunning artwork from the Origins set. Rubber backing, cloth top."
+        },
+        {
+            "id": "rb-print-jinx-mini",
+            "title": "Jinx Miniature (Painted)",
+            "category": "prints",
+            "price": 45.00,
+            "image": "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?auto=format&fit=crop&w=400&q=80",
+            "stock": 0,
+            "available": true,
+            "preOrder": true,
+            "description": "Custom 3D printed and hand-painted Jinx miniature. High-detail resin print. Made to order - 7-10 day turnaround."
+        },
+        {
+            "id": "rb-print-poro-plush",
+            "title": "Chibi Poro Plushie",
+            "category": "accessories",
+            "price": 18.00,
+            "image": "https://images.unsplash.com/photo-1559479014-48e5da45043b?auto=format&fit=crop&w=400&q=80",
+            "stock": 22,
+            "available": true,
+            "description": "Adorable chibi-style Poro plush toy. Officially licensed Riftbound merchandise. Approximately 6 inches tall."
+        },
+        {
+            "id": "rb-print-dice-tower",
+            "title": "3D Printed Dice Tower (Noxus Theme)",
+            "category": "prints",
+            "price": 28.00,
+            "image": "https://images.unsplash.com/photo-1570303363992-6796a04ca1be?auto=format&fit=crop&w=400&q=80",
+            "stock": 0,
+            "available": true,
+            "preOrder": true,
+            "description": "Custom 3D printed dice tower with Noxus faction theming. PLA filament. Made to order - 3-5 day turnaround."
+        },
+        {
+            "id": "rb-bundle-starter",
+            "title": "Beginner's Bundle (Deck + Sleeves + Playmat)",
+            "category": "sealed",
+            "price": 49.99,
+            "image": "https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?auto=format&fit=crop&w=400&q=80",
+            "stock": 15,
+            "available": true,
+            "description": "Complete starter bundle including 1 starter deck, 100 premium sleeves, and an official playmat. Save £12 vs buying separately!"
+        },
+        {
+            "id": "rb-single-captain-farron",
+            "title": "Captain Farron (Unit - Rare)",
+            "category": "singles",
+            "price": 12.00,
+            "image": "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=400&q=80",
+            "stock": 11,
+            "available": true,
+            "description": "Captain Farron - Rare unit card from Riftbound: Origins. Powerful late-game finisher."
+        }
+    ]
+}
