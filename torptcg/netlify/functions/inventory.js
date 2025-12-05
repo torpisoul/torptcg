@@ -148,9 +148,9 @@ exports.handler = async function (event, context) {
         // ============================================
         if (event.httpMethod === 'POST') {
             const body = JSON.parse(event.body || '{}');
-            const { productId, stock, action } = body;
+            const { productId, stock, action, delta } = body;
 
-            console.log(`[INVENTORY] Update request: ${action} for ${productId}`);
+            console.log(`[INVENTORY] Update request: ${action || (delta ? 'adjust' : 'unknown')} for ${productId}`);
 
             // Fetch current master inventory
             const masterData = await fetchBin(MASTER_INVENTORY_BIN_ID, JSONBIN_API_KEY);
@@ -159,8 +159,35 @@ exports.handler = async function (event, context) {
             // Find the item
             const itemIndex = inventory.findIndex(item => item.productId === productId);
 
+            // Handle 'adjust' action (or implicit delta)
+            if ((action === 'adjust' || (!action && delta !== undefined)) && delta !== undefined) {
+                if (itemIndex >= 0) {
+                    const oldStock = inventory[itemIndex].stock;
+                    const change = parseInt(delta);
+                    const newStock = Math.max(0, oldStock + change); // Prevent negative stock
+
+                    inventory[itemIndex].stock = newStock;
+                    console.log(`[INVENTORY] Adjusted ${productId}: ${oldStock} + (${change}) = ${newStock}`);
+
+                    // Remove from inventory if stock reaches 0 (optional, keeping it for now but marking as 0)
+                    // If you want to remove it:
+                    /*
+                    if (newStock <= 0) {
+                        inventory.splice(itemIndex, 1);
+                        console.log(`[INVENTORY] Removed ${productId} (stock depleted)`);
+                    }
+                    */
+                } else {
+                    console.warn(`[INVENTORY] Product ${productId} not found for adjustment`);
+                    return {
+                        statusCode: 404,
+                        headers,
+                        body: JSON.stringify({ error: "Product not found" })
+                    };
+                }
+            }
             // Handle 'create' action (Dual Write: Product Bin + Master Inventory)
-            if (action === 'create' && body.product && body.binId) {
+            else if (action === 'create' && body.product && body.binId) {
                 console.log(`[INVENTORY] Creating new product in bin ${body.binId}`);
 
                 // 1. Fetch target product bin

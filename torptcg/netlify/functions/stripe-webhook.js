@@ -85,44 +85,34 @@ async function handlePaymentSucceeded(paymentIntent) {
 }
 
 async function updateInventoryStock(productId, delta) {
-    const INVENTORY_URL = process.env.URL || 'http://localhost:8888';
-    const url = `${INVENTORY_URL}/.netlify/functions/inventory`;
+    console.log(`[STRIPE-WEBHOOK] invoking inventory function locally for ${productId}, delta: ${delta}`);
 
-    const payload = JSON.stringify({
-        productId: productId,
-        delta: delta,
-        action: 'adjust'
-    });
+    try {
+        // Import the inventory function handler directly to avoid network calls
+        const inventoryFunction = require('./inventory');
 
-    return new Promise((resolve, reject) => {
-        const urlObj = new URL(url);
-        const options = {
-            hostname: urlObj.hostname,
-            port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
-            path: urlObj.pathname,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(payload)
-            }
+        const mockEvent = {
+            httpMethod: 'POST',
+            body: JSON.stringify({
+                productId: productId,
+                delta: delta,
+                action: 'adjust'
+            })
         };
 
-        const protocol = urlObj.protocol === 'https:' ? https : require('http');
+        const mockContext = {}; // Context is usually not strictly needed for this logic
 
-        const req = protocol.request(options, (res) => {
-            let data = '';
-            res.on('data', chunk => data += chunk);
-            res.on('end', () => {
-                if (res.statusCode >= 200 && res.statusCode < 300) {
-                    resolve(JSON.parse(data));
-                } else {
-                    reject(new Error(`HTTP ${res.statusCode}: ${data}`));
-                }
-            });
-        });
+        const response = await inventoryFunction.handler(mockEvent, mockContext);
 
-        req.on('error', reject);
-        req.write(payload);
-        req.end();
-    });
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+            console.log(`[STRIPE-WEBHOOK] Inventory update successful: ${response.body}`);
+            return JSON.parse(response.body);
+        } else {
+            throw new Error(`Inventory function returned ${response.statusCode}: ${response.body}`);
+        }
+
+    } catch (error) {
+        console.error(`[STRIPE-WEBHOOK] Direct inventory call failed:`, error);
+        throw error;
+    }
 }
