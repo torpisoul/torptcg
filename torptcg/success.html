@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Successful | TorpTCG</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            background: var(--gradient-main);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-container h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .success-container p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .order-details {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .order-details h2 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+        }
+
+        .detail-value {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 15px 40px;
+            background: var(--gradient-main);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 140, 66, 0.4);
+        }
+
+        .info-box {
+            background: rgba(255, 140, 66, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .info-box h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">TORPTCG</div>
+        <div class="nav-links">
+            <a href="index.html">Shop</a>
+            <a href="index.html#contact">Contact</a>
+        </div>
+    </nav>
+
+    <div class="success-container">
+        <div class="success-icon">✓</div>
+        <h1>Order Successful!</h1>
+        <p>Thank you for your purchase. Your order has been confirmed and will be processed shortly.</p>
+
+        <div class="order-details">
+            <h2>What Happens Next?</h2>
+            <div class="detail-row">
+                <span class="detail-label">📧 Email Confirmation</span>
+                <span class="detail-value">Sent to your inbox</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">📦 Processing</span>
+                <span class="detail-value">1-2 business days</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">🚚 Shipping</span>
+                <span class="detail-value">3-5 business days</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">📱 Tracking</span>
+                <span class="detail-value">Sent via email</span>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>Need Help?</h3>
+            <p>If you have any questions about your order, please contact us at <strong>support@torptcg.com</strong> or
+                use our <a href="index.html#contact" style="color: var(--primary);">contact form</a>.</p>
+        </div>
+
+        <a href="index.html" class="btn-primary">Continue Shopping</a>
+    </div>
+
+    <footer
+        style="margin-top: 100px; text-align: center; padding: 40px 20px; border-top: 1px solid var(--glass-border);">
+        <p style="color: var(--text-muted);">&copy; 2024 TorpTCG. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

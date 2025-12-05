@@ -212,7 +212,16 @@ exports.handler = async function (event, context) {
                 if (itemIndex >= 0) {
                     // Update existing item
                     const oldStock = inventory[itemIndex].stock;
+                    const oldBinId = inventory[itemIndex].binId;
                     inventory[itemIndex].stock = parseInt(stock);
+
+                    // Update binId if provided (important for dual-domain cards that may have been miscategorized)
+                    if (body.binId) {
+                        inventory[itemIndex].binId = body.binId;
+                        if (oldBinId !== body.binId) {
+                            console.log(`[INVENTORY] Updated ${productId} binId: ${oldBinId} → ${body.binId}`);
+                        }
+                    }
 
                     // Remove from inventory if stock is 0
                     if (inventory[itemIndex].stock <= 0) {

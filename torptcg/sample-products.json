@@ -1,0 +1,12 @@
+[
+    {
+        "id": "sample-product",
+        "title": "Sample Product (Delete Me)",
+        "category": "accessories",
+        "price": 0.01,
+        "stock": 0,
+        "madeToOrder": false,
+        "image": "https://via.placeholder.com/300",
+        "description": "Sample product - delete after adding your first real product"
+    }
+]

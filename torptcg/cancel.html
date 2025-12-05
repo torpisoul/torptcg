@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Cancelled | TorpTCG</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .cancel-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .cancel-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            background: rgba(231, 76, 60, 0.2);
+            border: 3px solid #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #e74c3c;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .cancel-container h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        .cancel-container p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .info-box h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            padding: 10px 0;
+            color: var(--text-muted);
+        }
+
+        .info-box li::before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 15px 40px;
+            background: var(--gradient-main);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 140, 66, 0.4);
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            padding: 15px 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">TORPTCG</div>
+        <div class="nav-links">
+            <a href="index.html">Shop</a>
+            <a href="index.html#contact">Contact</a>
+        </div>
+    </nav>
+
+    <div class="cancel-container">
+        <div class="cancel-icon">✕</div>
+        <h1>Payment Cancelled</h1>
+        <p>Your payment was cancelled and no charges were made to your account.</p>
+        <p>Your items are still available if you'd like to complete your purchase.</p>
+
+        <div class="info-box">
+            <h2>Common Reasons for Cancellation</h2>
+            <ul>
+                <li>Changed your mind about the purchase</li>
+                <li>Wanted to review your order details</li>
+                <li>Encountered a payment issue</li>
+                <li>Prefer a different payment method</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h2>Need Assistance?</h2>
+            <p style="color: var(--text-muted);">
+                If you experienced any issues during checkout or have questions about our products,
+                we're here to help! Contact us at <strong style="color: var(--primary);">support@torptcg.com</strong>
+                or use our <a href="index.html#contact" style="color: var(--primary);">contact form</a>.
+            </p>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <a href="javascript:history.back()" class="btn-primary">Try Again</a>
+            <a href="index.html" class="btn-secondary">Continue Shopping</a>
+        </div>
+    </div>
+
+    <footer
+        style="margin-top: 100px; text-align: center; padding: 40px 20px; border-top: 1px solid var(--glass-border);">
+        <p style="color: var(--text-muted);">&copy; 2024 TorpTCG. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

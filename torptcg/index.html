@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="cards-styles.css">
     <link rel="stylesheet" href="inventory-styles.css">
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 
 <body>
@@ -47,6 +46,13 @@
             <button class="filter-btn" onclick="filterProducts('sealed')">Sealed</button>
             <button class="filter-btn" onclick="filterProducts('accessories')">Accessories</button>
             <button class="filter-btn" onclick="filterProducts('prints')">3D Prints</button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container" style="max-width: 600px; margin: 20px auto;">
+            <input type="search" id="product-search" class="search-input" placeholder="Search products by name or ID..."
+                oninput="handleProductSearch()"
+                style="width: 100%; padding: 12px 20px; font-size: 1rem; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-card); color: var(--text-primary); transition: all 0.3s ease;">
         </div>
 
         <!-- Out of Stock Toggle -->
@@ -250,7 +256,7 @@
                     <label>Enquiry Type</label>
                     <select name="enquiry-type">
                         <option value="stock">Stock Request</option>
-                        <option value="notify">Notify Me (Out of Stock)</option>
+
                         <option value="commission">3D Print Commission</option>
                         <option value="other">Other</option>
                     </select>

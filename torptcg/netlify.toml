@@ -6,9 +6,16 @@
 [dev]
   [dev.env]
     JSONBIN_API_KEY = "$2a$10$ECN7feFnPRGgVecg0Y.qo.sD4y5GnUixuGmdbKhiP2CaBJlJ1rO7a"
-    JSONBIN_INVENTORY_BIN = "https://api.jsonbin.io/v3/b/6927370eae596e708f7294be"
+    JSONBIN_INVENTORY_BIN = "692ec5feae596e708f7e5206"
     CARD_INVENTORY_BIN_ID = "692e1a8443b1c97be9d1746c"
     MASTER_INVENTORY_BIN_ID = "692ed2dbae596e708f7e68f9"
+    CALM_BIN_ID = "692da2d1d0ea881f400b9ff3"
+    FURY_BIN_ID = "692da2d2d0ea881f400b9ff6"
+    ORDER_BIN_ID = "692da2d3d0ea881f400b9ffc"
+    CHAOS_BIN_ID = "692da2d443b1c97be9d09818"
+    MIND_BIN_ID = "692da2d543b1c97be9d0981c"
+    BODY_BIN_ID = "692da2d6d0ea881f400ba004"
+    DUAL_BIN_ID = "692da2d7d0ea881f400ba009"
 
 # Ensure admin panel works
 [[redirects]]

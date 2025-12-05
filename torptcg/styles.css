@@ -233,6 +233,57 @@ nav {
     box-shadow: 0 0 15px rgba(255, 140, 66, 0.2);
 }
 
+/* --- PRODUCT SEARCH --- */
+.search-container {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.search-input {
+    transition: all 0.3s ease !important;
+}
+
+.search-input:hover {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1) !important;
+}
+
+.search-input:focus {
+    outline: none !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.2), 0 0 20px rgba(255, 140, 66, 0.1) !important;
+}
+
+/* Clear button for search input */
+.search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23b2bec3'%3E%3Cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E");
+    cursor: pointer;
+}
+
+.search-input::-webkit-search-cancel-button:hover {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff8c42'%3E%3Cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E");
+}
+
+/* No results message */
+.no-results-message {
+    animation: fadeIn 0.5s ease;
+}
+
 /* --- PRODUCT GRID --- */
 .product-grid {
     display: grid;
@@ -781,112 +832,395 @@ label {
     box-shadow: 0 0 20px rgba(187, 14, 28, 0.3), 0 0 40px rgba(16, 172, 55, 0.3) !important;
 }
 
-.product-card[data-domain="fury"][data-domain-2="calm"]:hover,
-.product-card[data-domain="calm"][data-domain-2="fury"]:hover {
-    box-shadow: 0 0 20px var(--domain-fury), 0 0 40px var(--domain-calm) !important;
-}
-
-.product-card[data-domain="mind"][data-domain-2="body"]:hover,
-.product-card[data-domain="body"][data-domain-2="mind"]:hover {
-    box-shadow: 0 0 20px var(--domain-mind), 0 0 40px var(--domain-body) !important;
-}
-
-.product-card[data-domain="chaos"][data-domain-2="order"]:hover,
-.product-card[data-domain="order"][data-domain-2="chaos"]:hover {
-    box-shadow: 0 0 20px var(--domain-chaos), 0 0 40px var(--domain-order) !important;
-}
-
 .product-card[data-domain="fury"][data-domain-2="mind"]:hover,
 .product-card[data-domain="mind"][data-domain-2="fury"]:hover {
+    border: 2px solid transparent;
+    background-image:
+        /* Top layer */
+        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        /* Bottom layer */
+        linear-gradient(to bottom right, var(--domain-fury), var(--domain-mind));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+
     box-shadow: 0 0 20px var(--domain-fury), 0 0 40px var(--domain-mind) !important;
 }
 
 .product-card[data-domain="calm"][data-domain-2="body"]:hover,
 .product-card[data-domain="body"][data-domain-2="calm"]:hover {
+    border: 2px solid transparent;
+    background-image:
+        /* Top layer */
+        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        /* Bottom layer */
+        linear-gradient(to bottom right, var(--domain-calm), var(--domain-body));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
     box-shadow: 0 0 20px var(--domain-calm), 0 0 40px var(--domain-body) !important;
 }
 
 .product-card[data-domain="fury"][data-domain-2="body"]:hover,
 .product-card[data-domain="body"][data-domain-2="fury"]:hover {
+    border: 2px solid transparent;
+    background-image:
+        /* Top layer */
+        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        /* Bottom layer */
+        linear-gradient(to bottom right, var(--domain-fury), var(--domain-body));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
     box-shadow: 0 0 20px var(--domain-fury), 0 0 40px var(--domain-body) !important;
 }
 
 .product-card[data-domain="calm"][data-domain-2="mind"]:hover,
 .product-card[data-domain="mind"][data-domain-2="calm"]:hover {
+    border: 2px solid transparent;
+    background-image:
+        /* Top layer */
+        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        /* Bottom layer */
+        linear-gradient(to bottom right, var(--domain-calm), var(--domain-mind));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
     box-shadow: 0 0 20px var(--domain-calm), 0 0 40px var(--domain-mind) !important;
 }
 
 .product-card[data-domain="fury"][data-domain-2="order"]:hover,
 .product-card[data-domain="order"][data-domain-2="fury"]:hover {
+    border: 2px solid transparent;
+    background-image:
+        /* Top layer */
+        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        /* Bottom layer */
+        linear-gradient(to bottom right, var(--domain-fury), var(--domain-order));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
     box-shadow: 0 0 20px var(--domain-fury), 0 0 40px var(--domain-order) !important;
 }
 
 .product-card[data-domain="calm"][data-domain-2="chaos"]:hover,
 .product-card[data-domain="chaos"][data-domain-2="calm"]:hover {
+    border: 2px solid transparent;
+    background-image:
+        /* Top layer */
+        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        /* Bottom layer */
+        linear-gradient(to bottom right, var(--domain-calm), var(--domain-chaos));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
     box-shadow: 0 0 20px var(--domain-calm), 0 0 40px var(--domain-chaos) !important;
 }
 
 .product-card[data-domain="mind"][data-domain-2="order"]:hover,
 .product-card[data-domain="order"][data-domain-2="mind"]:hover {
+    border: 2px solid transparent;
+    background-image:
+        /* Top layer */
+        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        /* Bottom layer */
+        linear-gradient(to bottom right, var(--domain-mind), var(--domain-order));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
     box-shadow: 0 0 20px var(--domain-mind), 0 0 40px var(--domain-order) !important;
 }
 
 .product-card[data-domain="mind"][data-domain-2="chaos"]:hover,
 .product-card[data-domain="chaos"][data-domain-2="mind"]:hover {
+    border: 2px solid transparent;
+    background-image:
+        /* Top layer */
+        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        /* Bottom layer */
+        linear-gradient(to bottom right, var(--domain-mind), var(--domain-chaos));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
     box-shadow: 0 0 20px var(--domain-mind), 0 0 40px var(--domain-chaos) !important;
 }
 
 .product-card[data-domain="body"][data-domain-2="order"]:hover,
 .product-card[data-domain="order"][data-domain-2="body"]:hover {
+    border: 2px solid transparent;
+    background-image:
+        /* Top layer */
+        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        /* Bottom layer */
+        linear-gradient(to bottom right, var(--domain-body), var(--domain-order));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
     box-shadow: 0 0 20px var(--domain-body), 0 0 40px var(--domain-order) !important;
 }
 
 .product-card[data-domain="body"][data-domain-2="chaos"]:hover,
 .product-card[data-domain="chaos"][data-domain-2="body"]:hover {
+    border: 2px solid transparent;
+    background-image:
+        /* Top layer */
+        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        /* Bottom layer */
+        linear-gradient(to bottom right, var(--domain-body), var(--domain-chaos));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
     box-shadow: 0 0 20px var(--domain-body), 0 0 40px var(--domain-chaos) !important;
+}
+
+.product-card[data-domain="calm"][data-domain-2="order"]:hover,
+.product-card[data-domain="order"][data-domain-2="calm"]:hover {
+    border: 2px solid transparent;
+    background-image:
+        /* Top layer */
+        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        /* Bottom layer */
+        linear-gradient(to bottom right, var(--domain-calm), var(--domain-order));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 0 20px var(--domain-calm), 0 0 40px var(--domain-order) !important;
+}
+
+.product-card[data-domain="fury"][data-domain-2="chaos"]:hover,
+.product-card[data-domain="chaos"][data-domain-2="fury"]:hover {
+    border: 2px solid transparent;
+    background-image:
+        /* Top layer */
+        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        /* Bottom layer */
+        linear-gradient(to bottom right, var(--domain-fury), var(--domain-chaos));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 0 20px var(--domain-fury), 0 0 40px var(--domain-chaos) !important;
 }
 
 /* Domain-specific border colors and glows for single-domain cards */
 .product-card[data-domain="fury"]:not([data-domain-2]):hover {
     border-color: var(--domain-fury);
-    box-shadow: 0 0 20px var(--domain-fury), 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 20px var(--domain-fury), 0 0 40px var(--domain-fury);
 }
 
 .product-card[data-domain="calm"]:not([data-domain-2]):hover {
     border-color: var(--domain-calm);
-    box-shadow: 0 0 20px var(--domain-calm), 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 20px var(--domain-calm), 0 0 40px var(--domain-calm);
 }
 
 .product-card[data-domain="mind"]:not([data-domain-2]):hover {
     border-color: var(--domain-mind);
-    box-shadow: 0 0 20px var(--domain-mind), 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 20px var(--domain-mind), 0 0 40px var(--domain-mind);
 }
 
 .product-card[data-domain="body"]:not([data-domain-2]):hover {
     border-color: var(--domain-body);
-    box-shadow: 0 0 20px var(--domain-body), 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 20px var(--domain-body), 0 0 40px var(--domain-body);
 }
 
 .product-card[data-domain="chaos"]:not([data-domain-2]):hover {
     border-color: var(--domain-chaos);
-    box-shadow: 0 0 20px var(--domain-chaos), 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 20px var(--domain-chaos), 0 0 40px var(--domain-chaos);
 }
 
 .product-card[data-domain="order"]:not([data-domain-2]):hover {
     border-color: var(--domain-order);
-    box-shadow: 0 0 20px var(--domain-order), 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 20px var(--domain-order), 0 0 40px var(--domain-order);
 }
 
 /* Rainbow gradient for non-singles (products without data-domain) */
 .product-card:not([data-domain]):hover {
-    border-image: linear-gradient(135deg,
+    border: 3px solid transparent;
+    background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+        linear-gradient(135deg,
             var(--domain-fury), var(--domain-calm), var(--domain-mind),
             var(--domain-body), var(--domain-chaos), var(--domain-order),
-            var(--domain-fury)) 1;
-    box-shadow: 0 0 20px rgba(185, 185, 185, 0.3), 0 20px 40px rgba(0, 0, 0, 0.4);
+            var(--domain-fury)) border-box;
+    /* add box-shadow into a rainbow gradient to reflect the gradient above */
+    box-shadow: 0 0 20px var(--domain-fury), 0 0 40px var(--domain-calm), 0 0 60px var(--domain-mind), 0 0 80px var(--domain-body), 0 0 100px var(--domain-chaos), 0 0 120px var(--domain-order), 0 0 140px var(--domain-fury);
 }
 
 /* Hide the out-of-stock toggle - not compatible with current inventory architecture */
 .stock-toggle-container {
     display: none !important;
+}
+
+/* ============================================ */
+/* CARD MODAL - Full Screen Card View */
+/* ============================================ */
+
+.card-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-modal.show {
+    display: flex;
+    opacity: 1;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    font-size: 50px;
+    font-weight: 300;
+    color: var(--text-main);
+    cursor: pointer;
+    z-index: 10001;
+    transition: all 0.3s ease;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: var(--primary);
+    transform: rotate(90deg);
+}
+
+.modal-content {
+    display: flex;
+    gap: 40px;
+    max-width: 1200px;
+    width: 100%;
+    animation: modalSlideIn 0.4s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-card-image {
+    max-width: 500px;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    object-fit: contain;
+    cursor: default;
+}
+
+.modal-card-info {
+    flex: 1;
+    color: var(--text-main);
+    overflow-y: auto;
+    max-height: 90vh;
+    padding-right: 20px;
+}
+
+.modal-card-info h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: var(--primary);
+}
+
+.modal-card-info .card-details {
+    display: grid;
+    gap: 15px;
+}
+
+.modal-card-info .detail-row {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.modal-card-info .detail-label {
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 150px;
+}
+
+.modal-card-info .detail-value {
+    color: var(--text-main);
+}
+
+.modal-card-info .card-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 20px 0;
+}
+
+.modal-card-info .card-stock {
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 10px 0;
+}
+
+.modal-card-info .stock-in {
+    background: rgba(13, 150, 45, 0.2);
+    color: #0d962d;
+    border: 1px solid #0d962d;
+}
+
+.modal-card-info .stock-low {
+    background: rgba(255, 140, 66, 0.2);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.modal-card-info .stock-out {
+    background: rgba(206, 49, 1, 0.2);
+    color: #ce3101;
+    border: 1px solid #ce3101;
+}
+
+.modal-card-info .modal-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+}
+
+.modal-card-info .btn {
+    padding: 15px 30px;
+    background: var(--gradient-main);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.modal-card-info .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 140, 66, 0.3);
+}
+
+.modal-card-info .btn-secondary {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .modal-card-image {
+        max-width: 100%;
+    }
+
+    .modal-close {
+        top: 10px;
+        right: 20px;
+        font-size: 40px;
+    }
 }

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management | TorpTCG Admin</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .admin-container {
+            max-width: 1600px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-add-product {
+            padding: 12px 24px;
+            background: var(--gradient-main);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add-product:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 140, 66, 0.4);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(138, 43, 226, 0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .product-id {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-family: 'Courier New', monospace;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .product-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 140, 66, 0.2);
+            color: var(--primary);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .stock-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .stock-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .stock-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .stock-input {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .stock-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit,
+        .btn-delete {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-edit:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .btn-delete:hover {
+            background: #e74c3c;
+            border-color: #e74c3c;
+        }
+
+        .made-to-order-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            font-size: 30px;
+            font-weight: 300;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 14px;
+            background: var(--gradient-main);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 140, 66, 0.4);
+        }
+
+        .btn-save:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .save-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #00b894;
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 10001;
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .loading,
+        .no-results {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">TORPTCG ADMIN</div>
+        <div class="nav-links">
+            <a href="card-inventory.html">Card Inventory</a>
+            <a href="../index.html">Back to Store</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <div class="header-actions">
+                <h1>Product Management</h1>
+                <button class="btn-add-product" onclick="showAddModal()">+ Add New Product</button>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Manage sealed products, accessories, and 3D prints
+            </p>
+
+            <div class="filter-tabs">
+                <div class="filter-tab active" data-filter="all" onclick="switchFilter('all')">All Products</div>
+                <div class="filter-tab" data-filter="sealed" onclick="switchFilter('sealed')">Sealed Products</div>
+                <div class="filter-tab" data-filter="accessories" onclick="switchFilter('accessories')">Accessories & 3D
+                    Prints</div>
+            </div>
+        </div>
+
+        <div id="product-container" class="loading">Loading products...</div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add New Product</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+
+            <form id="product-form" onsubmit="saveProduct(event)">
+                <input type="hidden" id="product-id">
+
+                <div class="form-group">
+                    <label for="product-name">Product Name *</label>
+                    <input type="text" id="product-name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-category">Category *</label>
+                    <select id="product-category" required>
+                        <option value="">Select category...</option>
+                        <option value="sealed">Sealed Product</option>
+                        <option value="accessories">Accessory / 3D Print</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-price">Price (£) *</label>
+                    <input type="number" id="product-price" step="0.01" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-stock">Stock Quantity</label>
+                    <input type="number" id="product-stock" min="0" value="0">
+                    <small style="color: var(--text-muted);">Set to 0 for made-to-order items</small>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="product-made-to-order">
+                    <label for="product-made-to-order">Made to Order (3D Prints)</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-image">Image URL *</label>
+                    <input type="url" id="product-image" required>
+                    <small style="color: var(--text-muted);">Direct link to product image</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-description">Description</label>
+                    <textarea id="product-description"></textarea>
+                </div>
+
+                <button type="submit" class="btn-save" id="save-btn">Save Product</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="save-indicator" id="save-indicator">✓ Saved</div>
+
+    <script>
+        let products = [];
+        let currentFilter = 'all';
+        let editingProductId = null;
+        const PRODUCTS_BIN_ID = '6930a9c3d0ea881f4010f6d3'; // From your setup
+
+        // Load products
+        async function loadProducts() {
+            const container = document.getElementById('product-container');
+            container.innerHTML = '<div class="loading">Loading products...</div>';
+
+            try {
+                const response = await fetch('/.netlify/functions/products');
+                if (!response.ok) throw new Error('Failed to fetch products');
+
+                const data = await response.json();
+                products = data.filter(p => p.category === 'sealed' || p.category === 'accessories');
+
+                console.log(`Loaded ${products.length} products`);
+                renderProducts();
+            } catch (error) {
+                console.error('Error loading products:', error);
+                container.innerHTML = '<div class="no-results">Error loading products. Please refresh.</div>';
+            }
+        }
+
+        // Render products
+        function renderProducts() {
+            const container = document.getElementById('product-container');
+            let filtered = products;
+
+            if (currentFilter !== 'all') {
+                filtered = products.filter(p => p.category === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="no-results">No products found. Click "Add New Product" to get started.</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            container.className = 'product-grid';
+
+            filtered.forEach(product => {
+                const card = createProductCard(product);
+                container.appendChild(card);
+            });
+        }
+
+        // Create product card
+        function createProductCard(product) {
+            const div = document.createElement('div');
+            div.className = 'product-card';
+
+            const stock = product.stock || 0;
+            const price = product.price ? `£${product.price.toFixed(2)}` : 'N/A';
+            const categoryName = product.category === 'sealed' ? 'Sealed Product' : 'Accessory / 3D Print';
+            const madeToOrder = product.madeToOrder || false;
+
+            div.innerHTML = `
+                <img src="${product.image || 'https://via.placeholder.com/300'}" 
+                     alt="${product.title}" 
+                     class="product-image" 
+                     onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                <div class="product-category">${categoryName}</div>
+                ${madeToOrder ? '<div class="made-to-order-badge">Made to Order</div>' : ''}
+                <div class="product-name">${product.title}</div>
+                <div class="product-id">${product.id}</div>
+                <div class="product-price">${price}</div>
+                
+                ${!madeToOrder ? `
+                    <div class="stock-label">Stock Level</div>
+                    <div class="stock-control">
+                        <button class="stock-btn" onclick="adjustStock('${product.id}', -1)">−</button>
+                        <input type="number" class="stock-input" value="${stock}" 
+                               onchange="setStock('${product.id}', this.value)" min="0">
+                        <button class="stock-btn" onclick="adjustStock('${product.id}', 1)">+</button>
+                    </div>
+                ` : '<div style="text-align: center; color: var(--text-muted); margin: 10px 0;">No stock tracking</div>'}
+                
+                <div class="product-actions">
+                    <button class="btn-edit" onclick="editProduct('${product.id}')">Edit</button>
+                    <button class="btn-delete" onclick="deleteProduct('${product.id}')">Delete</button>
+                </div>
+            `;
+
+            return div;
+        }
+
+        // Filter products
+        function switchFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.filter === filter);
+            });
+            renderProducts();
+        }
+
+        // Stock management
+        function adjustStock(productId, delta) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const newStock = Math.max(0, (product.stock || 0) + delta);
+            setStock(productId, newStock);
+        }
+
+        async function setStock(productId, value) {
+            const stock = parseInt(value) || 0;
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            try {
+                const response = await fetch('/.netlify/functions/inventory', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        productId: productId,
+                        stock: stock,
+                        action: 'set',
+                        binId: PRODUCTS_BIN_ID,
+                        category: product.category
+                    })
+                });
+
+                if (response.ok) {
+                    product.stock = stock;
+                    renderProducts();
+                    showSaveIndicator('✓ Stock updated');
+                } else {
+                    const err = await response.json();
+                    alert('Error: ' + (err.error || 'Failed to update stock'));
+                }
+            } catch (error) {
+                console.error('Error setting stock:', error);
+                alert('Failed to update stock. Please try again.');
+            }
+        }
+
+        // Modal functions
+        function showAddModal() {
+            editingProductId = null;
+            document.getElementById('modal-title').textContent = 'Add New Product';
+            document.getElementById('product-form').reset();
+            document.getElementById('product-id').value = '';
+            document.getElementById('product-modal').classList.add('show');
+        }
+
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            editingProductId = productId;
+            document.getElementById('modal-title').textContent = 'Edit Product';
+            document.getElementById('product-id').value = product.id;
+            document.getElementById('product-name').value = product.title;
+            document.getElementById('product-category').value = product.category;
+            document.getElementById('product-price').value = product.price || 0;
+            document.getElementById('product-stock').value = product.stock || 0;
+            document.getElementById('product-made-to-order').checked = product.madeToOrder || false;
+            document.getElementById('product-image').value = product.image || '';
+            document.getElementById('product-description').value = product.description || '';
+            document.getElementById('product-modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('product-modal').classList.remove('show');
+        }
+
+        // Save product
+        async function saveProduct(event) {
+            event.preventDefault();
+
+            const saveBtn = document.getElementById('save-btn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            const productData = {
+                id: editingProductId || `product-${Date.now()}`,
+                title: document.getElementById('product-name').value,
+                category: document.getElementById('product-category').value,
+                price: parseFloat(document.getElementById('product-price').value),
+                stock: parseInt(document.getElementById('product-stock').value) || 0,
+                madeToOrder: document.getElementById('product-made-to-order').checked,
+                image: document.getElementById('product-image').value,
+                description: document.getElementById('product-description').value
+            };
+
+            try {
+                const response = await fetch('/.netlify/functions/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: editingProductId ? 'update' : 'add',
+                        product: productData,
+                        binId: PRODUCTS_BIN_ID
+                    })
+                });
+
+                if (response.ok) {
+                    closeModal();
+                    await loadProducts();
+                    showSaveIndicator(editingProductId ? '✓ Product updated' : '✓ Product added');
+                } else {
+                    const err = await response.json();
+                    alert('Error: ' + (err.error || 'Failed to save product'));
+                }
+            } catch (error) {
+                console.error('Error saving product:', error);
+                alert('Failed to save product. Please try again.');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Product';
+            }
+        }
+
+        // Delete product
+        async function deleteProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            if (!confirm(`Are you sure you want to delete "${product.title}"? This cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/.netlify/functions/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        productId: productId,
+                        binId: PRODUCTS_BIN_ID
+                    })
+                });
+
+                if (response.ok) {
+                    await loadProducts();
+                    showSaveIndicator('✓ Product deleted');
+                } else {
+                    const err = await response.json();
+                    alert('Error: ' + (err.error || 'Failed to delete product'));
+                }
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                alert('Failed to delete product. Please try again.');
+            }
+        }
+
+        function showSaveIndicator(message) {
+            const indicator = document.getElementById('save-indicator');
+            indicator.textContent = message;
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        // Close modal on outside click
+        document.getElementById('product-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'product-modal') {
+                closeModal();
+            }
+        });
+
+        // Initialize
+        loadProducts();
+    </script>
+</body>
+
+</html>

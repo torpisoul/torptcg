@@ -5,12 +5,18 @@
   "scripts": {
     "build": "node build-products.js",
     "dev": "npm run build && npx http-server -p 8080 -c-1",
-    "watch": "node watch-products.js"
+    "watch": "node watch-products.js",
+    "test": "node run-tests.js",
+    "test:ui": "node run-tests.js ui",
+    "test:headed": "node run-tests.js headed",
+    "test:debug": "node run-tests.js debug"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "gray-matter": "^4.0.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "http-server": "^14.1.1"
   }
 }

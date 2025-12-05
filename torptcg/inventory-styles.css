@@ -22,9 +22,8 @@
 
 .stock-low {
     color: #fdcb6e !important;
-    background: rgba(253, 203, 110, 0.1) !important;
+    background: black !important;
     border: 1px solid rgba(253, 203, 110, 0.3) !important;
-    animation: pulse-low 2s ease-in-out infinite !important;
 }
 
 @keyframes pulse-low {

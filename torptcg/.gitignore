@@ -9,3 +9,8 @@ products-data.json
 
 # Local development
 *.local.js
+
+# Playwright test artifacts
+test-results/
+playwright-report/
+playwright/.cache/

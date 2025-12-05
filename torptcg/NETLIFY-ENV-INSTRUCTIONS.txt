@@ -1,0 +1,18 @@
+Please add the following environment variables to your Netlify Site Settings:
+
+1. JSONBIN_API_KEY
+   Value: (Copy from your local .env file)
+
+2. MASTER_INVENTORY_BIN_ID
+   Value: (Copy from your local .env file)
+
+3. PRODUCTS_BIN_ID
+   Value: 6930a9c3d0ea881f4010f6d3
+
+Instructions:
+1. Go to https://app.netlify.com
+2. Select your site
+3. Go to Site configuration > Environment variables
+4. Click "Add a variable"
+5. Add each of the above key-value pairs
+6. Redeploy your site (Trigger deploy) for changes to take effect

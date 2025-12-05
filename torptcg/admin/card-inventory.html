@@ -216,13 +216,61 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Save All Button */
+        .save-all-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 30px;
+            background: var(--gradient-main);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(255, 140, 66, 0.3);
+        }
+
+        .save-all-btn.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .save-all-btn:hover {
+            transform: translateY(0) scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 140, 66, 0.4);
+        }
+
+        .save-all-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Highlight cards with pending changes */
+        .inventory-card.has-changes {
+            border-color: #f39c12;
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
+        }
+
+        .inventory-card.has-changes .stock-control {
+            background: rgba(243, 156, 18, 0.1);
+        }
     </style>
 </head>
 
 <body>
     <nav>
         <div class="logo">TORPTCG ADMIN</div>
-        <div class="nav-links"><a href="../index.html">Back to Store</a></div>
+        <div class="nav-links">
+            <a href="products.html">Product Management</a>
+            <a href="../index.html">Back to Store</a>
+        </div>
     </nav>
     <div class="admin-container">
         <div class="admin-header">
@@ -259,12 +307,14 @@
         </div>
         <div id="inventory-container" class="loading">Loading inventory...</div>
     </div>
+    <button class="save-all-btn" id="save-all-btn" onclick="saveAllChanges()">Save Changes</button>
     <div class="save-indicator" id="save-indicator">✓ Stock updated</div>
     <script src="../cards-script.js"></script>
     <script>
         let adminCards = [];
         let currentFilter = 'all';
         let searchQuery = '';
+        let pendingChanges = {}; // Track unsaved stock changes
 
         // Bin Mapping
         const BIN_MAP = {
@@ -341,6 +391,12 @@
             filtered.forEach(card => {
                 const div = document.createElement('div');
                 div.className = 'inventory-card';
+
+                // Add has-changes class if this card has pending changes
+                if (pendingChanges.hasOwnProperty(card.id)) {
+                    div.classList.add('has-changes');
+                }
+
                 const stock = card.stock !== null && card.stock !== undefined ? card.stock : 0;
                 const imageUrl = card.cardImage && card.cardImage.url ? card.cardImage.url : '';
                 const cardName = card.name || 'Unknown';
@@ -363,9 +419,27 @@
 
         function getBinIdForCard(cardId) {
             const card = adminCards.find(c => c.id === cardId);
-            if (!card) return null;
+            if (!card) {
+                console.log(`[getBinIdForCard] Card not found: ${cardId}`);
+                return null;
+            }
 
-            // Try to find domain
+            console.log(`[getBinIdForCard] Card ${cardId}:`, {
+                name: card.name,
+                hasDomain: !!card.domain,
+                hasValues: !!(card.domain && card.domain.values),
+                valuesLength: card.domain && card.domain.values ? card.domain.values.length : 0,
+                domains: card.domain && card.domain.values ? card.domain.values.map(d => d.id || d.label) : []
+            });
+
+            // Check if card has dual domains
+            if (card.domain && card.domain.values && card.domain.values.length > 1) {
+                // Dual-domain card - use the dual bin
+                console.log(`[getBinIdForCard] ✓ DUAL-DOMAIN detected for ${cardId}, using dual bin`);
+                return BIN_MAP['dual'];
+            }
+
+            // Single domain card
             let domain = '';
             if (card.domain && card.domain.values && card.domain.values.length > 0) {
                 domain = card.domain.values[0].id.toLowerCase();
@@ -373,6 +447,7 @@
                 domain = card.domain.value.id.toLowerCase();
             }
 
+            console.log(`[getBinIdForCard] Single domain for ${cardId}: ${domain}, bin: ${BIN_MAP[domain]}`);
             return BIN_MAP[domain] || null;
         }
 
@@ -388,41 +463,57 @@
             await setStock(cardId, newStock);
         }
 
-        async function setStock(cardId, value) {
+        async function setStock(cardId, value, batchMode = false) {
             const stock = parseInt(value) || 0;
             const binId = getBinIdForCard(cardId);
+
+            console.log(`[setStock] Saving ${cardId} with stock ${stock} to binId: ${binId}`);
 
             if (!binId) {
                 alert('Error: Could not determine bin ID for this card.');
                 return;
             }
 
+            const payload = {
+                productId: cardId,
+                stock: stock,
+                action: 'set',
+                binId: binId,
+                category: 'singles'
+            };
+
+            console.log('[setStock] Sending payload:', payload);
+
             try {
                 const response = await fetch('/.netlify/functions/inventory', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        productId: cardId,
-                        stock: stock,
-                        action: 'set',
-                        binId: binId,
-                        category: 'singles'
-                    })
+                    body: JSON.stringify(payload)
                 });
                 if (response.ok) {
-                    showSaveIndicator();
+                    if (!batchMode) {
+                        showSaveIndicator();
+                    }
                     // Update local state
                     const card = adminCards.find(c => c.id === cardId);
                     if (card) card.stock = stock;
-                    renderInventory(); // Re-render to update UI
-                    updateStats();
+                    if (!batchMode) {
+                        renderInventory(); // Re-render to update UI
+                        updateStats();
+                    }
                 } else {
                     const err = await response.json();
-                    alert('Error: ' + (err.error || 'Failed to update'));
+                    if (!batchMode) {
+                        alert('Error: ' + (err.error || 'Failed to update'));
+                    }
+                    throw new Error(err.error || 'Failed to update');
                 }
             } catch (error) {
                 console.error('Error setting stock:', error);
-                alert('Failed to update stock. Please try again.');
+                if (!batchMode) {
+                    alert('Failed to update stock. Please try again.');
+                }
+                throw error;
             }
         }
 
@@ -466,6 +557,77 @@
                 renderInventory();
             });
         });
+
+        // Update save button visibility and text
+        function updateSaveButton() {
+            const saveBtn = document.getElementById('save-all-btn');
+            const changeCount = Object.keys(pendingChanges).length;
+
+            if (changeCount > 0) {
+                saveBtn.classList.add('show');
+                saveBtn.textContent = `Save ${changeCount} Change${changeCount > 1 ? 's' : ''}`;
+            } else {
+                saveBtn.classList.remove('show');
+            }
+        }
+
+        // Save all pending changes in batch
+        async function saveAllChanges() {
+            const changeCount = Object.keys(pendingChanges).length;
+            if (changeCount === 0) return;
+
+            const saveBtn = document.getElementById('save-all-btn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            let successCount = 0;
+            let failCount = 0;
+
+            for (const [cardId, stock] of Object.entries(pendingChanges)) {
+                try {
+                    await setStock(cardId, stock, true); // true = skip UI updates
+                    successCount++;
+                } catch (error) {
+                    console.error(`Failed to save ${cardId}:`, error);
+                    failCount++;
+                }
+            }
+
+            // Clear pending changes
+            pendingChanges = {};
+            saveBtn.disabled = false;
+            updateSaveButton();
+
+            if (failCount === 0) {
+                showSaveIndicator(`✓ ${successCount} change${successCount > 1 ? 's' : ''} saved`);
+            } else {
+                showSaveIndicator(`⚠ ${successCount} saved, ${failCount} failed`);
+            }
+
+            renderInventory();
+            updateStats();
+        }
+
+        // Override adjustStock to use batching
+        const originalAdjustStock = adjustStock;
+        adjustStock = function (cardId, action) {
+            const card = adminCards.find(c => c.id === cardId);
+            if (!card) return;
+
+            const currentStock = card.stock || 0;
+            let newStock = currentStock;
+
+            if (action === 'increment') newStock++;
+            if (action === 'decrement') newStock--;
+            if (newStock < 0) newStock = 0;
+
+            // Store in pending changes instead of auto-saving
+            pendingChanges[cardId] = newStock;
+            card.stock = newStock; // Update local display
+
+            renderInventory();
+            updateSaveButton();
+        };
 
         loadInventory();
     </script>
