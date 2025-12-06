@@ -37,7 +37,7 @@ test.describe('Singles Page - Card Display', () => {
         expect(text?.trim()).toBeTruthy();
     });
 
-    skip.test('should display stock labels correctly', async ({ page }) => {
+    test('should display stock labels correctly', async ({ page }) => {
         const cards = page.locator('.product-card');
         const count = await cards.count();
 
