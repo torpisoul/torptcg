@@ -84,11 +84,20 @@ async function loadCardData() {
 
     console.log('Fetching card data from JSONBin...');
 
-    const promises = Object.entries(DOMAIN_BINS).map(([domain, binId]) =>
-        fetchBin(binId, apiKey).then(cards => ({ domain, cards }))
-    );
+    // Fetch sequentially to avoid 429 Rate Limit errors
+    const results = [];
+    const entries = Object.entries(DOMAIN_BINS);
 
-    const results = await Promise.all(promises);
+    for (const [domain, binId] of entries) {
+        // Add a small delay between requests
+        if (results.length > 0) {
+            await new Promise(resolve => setTimeout(resolve, 300));
+        }
+
+        const cards = await fetchBin(binId, apiKey);
+        results.push({ domain, cards });
+    }
+
     let allCards = [];
 
     results.forEach(({ domain, cards }) => {
