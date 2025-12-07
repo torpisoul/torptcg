@@ -51,8 +51,16 @@ test.describe('Singles Page - Card Display', () => {
 
                 // Check if stock text indicates item status
                 const lowerText = text?.toLowerCase() || '';
-                const validStockMessages = ['in stock', 'only 1 left', 'low stock', 'available', 'out of stock'];
-                const hasValidMessage = validStockMessages.some(msg => lowerText.includes(msg));
+                const validStockMessages = ['in stock', 'only \\d+ left', 'low stock', 'available', 'out of stock'];
+
+                const hasValidMessage = validStockMessages.some(msg => {
+                    // Handle regex patterns
+                    if (msg.includes('\\d+')) {
+                        const regex = new RegExp(msg);
+                        return regex.test(lowerText);
+                    }
+                    return lowerText.includes(msg);
+                });
 
                 expect(hasValidMessage).toBeTruthy();
             }

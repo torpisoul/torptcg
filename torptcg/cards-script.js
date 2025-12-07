@@ -237,7 +237,7 @@ function getCardStockStatus(card) {
     const stock = card.stock !== undefined ? card.stock : null;
 
     if (stock === null) {
-        return 'In Stock'; // Default when no stock data
+        return 'Out of Stock'; // Default when no stock data
     }
 
     if (stock === 0) {
@@ -256,7 +256,7 @@ function getCardStockClass(card) {
     const stock = card.stock !== undefined ? card.stock : null;
 
     if (stock === null) {
-        return 'stock-in'; // Default when no stock data
+        return 'stock-out'; // Default when no stock data
     }
 
     if (stock === 0) {
@@ -274,7 +274,7 @@ function getCardStockClass(card) {
 function canPurchaseCard(card) {
     const stock = card.stock !== undefined ? card.stock : null;
     // Allow purchase if stock is null (no data) or stock > 0
-    return stock === null || stock > 0;
+    return stock !== null && stock > 0;
 }
 
 /**
