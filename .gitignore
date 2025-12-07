@@ -1,2 +1,19 @@
+node_modules/
+products-data.json
+.DS_Store
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+
+# Local development
+*.local.js
+
+# Playwright test artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+
 # Local Netlify folder
 .netlify
