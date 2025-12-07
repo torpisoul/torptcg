@@ -50,8 +50,21 @@ async function fetchBin(binId, apiKey) {
             return record;
         } else if (record.page && record.page.cards && record.page.cards.items) {
             return record.page.cards.items;
+        } else if (record.page && record.page.cards) {
+            // New structure might be here
+             return record.page.cards;
+        } else if (record.items) {
+             return record.items;
         }
 
+        // Deep inspection for nested items
+        if (JSON.stringify(record).includes('"items":[')) {
+             // Fallback: try to find the array of items
+             // Note: This is a hacky way to find where the items are
+             if (record.page && record.page.cards && Array.isArray(record.page.cards.items)) return record.page.cards.items;
+        }
+
+        console.log(`Bin ${binId} structure unknown:`, Object.keys(record));
         return [];
     } catch (error) {
         console.error(`Error fetching bin ${binId}:`, error);
@@ -61,7 +74,7 @@ async function fetchBin(binId, apiKey) {
 
 async function loadCardData() {
     const now = Date.now();
-    const apiKey = process.env.JSONBIN_API_KEY || CONFIG_API_KEY;
+    const apiKey = process.env.JSONBIN_API_KEY || config.JSONBIN_API_KEY;
 
     // Return cached data if still valid
     if (cardCache && cacheTimestamp && (now - cacheTimestamp) < CACHE_DURATION) {
