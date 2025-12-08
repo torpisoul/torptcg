@@ -478,8 +478,45 @@ function filterProducts(category) {
         }
     }
 
-    // Render filtered products
-    renderProducts(category);
+    // Handle Singles category specially
+    if (category === 'singles') {
+        const filtersContainer = document.getElementById('show-filters-container');
+        if (filtersContainer) filtersContainer.style.display = 'block';
+
+        // Initialize card search if available
+        if (window.initCardSearch) {
+            window.initCardSearch();
+        } else {
+            // Fallback if cards-script.js hasn't loaded
+            renderProducts(category);
+        }
+    } else {
+        // Hide filters for non-singles
+        const filtersContainer = document.getElementById('show-filters-container');
+        if (filtersContainer) filtersContainer.style.display = 'none';
+
+        const searchPanel = document.getElementById('card-search-panel');
+        if (searchPanel) searchPanel.style.display = 'none';
+
+        const toggleBtn = document.getElementById('toggle-search');
+        if (toggleBtn) toggleBtn.innerHTML = '▼ Show Filters';
+
+        // Render standard products
+        renderProducts(category);
+    }
+}
+
+function toggleCardSearch() {
+    const panel = document.getElementById('card-search-panel');
+    const btn = document.getElementById('toggle-search');
+
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        btn.innerHTML = '▲ Hide Filters';
+    } else {
+        panel.style.display = 'none';
+        btn.innerHTML = '▼ Show Filters';
+    }
 }
 
 function toggleOutOfStock() {

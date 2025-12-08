@@ -128,6 +128,8 @@ function applyFilters() {
         name: document.getElementById('search-name').value.trim(),
         id: document.getElementById('search-id').value.trim(),
         ability: document.getElementById('search-ability').value.trim(),
+        priceMin: parseFloat(document.getElementById('price-min').value) || null,
+        priceMax: parseFloat(document.getElementById('price-max').value) || null,
         energyMin: parseInt(document.getElementById('energy-min').value) || null,
         energyMax: parseInt(document.getElementById('energy-max').value) || null,
         mightMin: parseInt(document.getElementById('might-min').value) || null,
@@ -143,6 +145,11 @@ function applyFilters() {
         if (filters.name && !fuzzyMatch(card.name, filters.name)) {
             return false;
         }
+
+        // Price filter
+        const price = card.price !== undefined ? card.price : 0.50; // Default price
+        if (filters.priceMin !== null && price < filters.priceMin) return false;
+        if (filters.priceMax !== null && price > filters.priceMax) return false;
 
         // ID/Public Code filter (fuzzy - typing "56" should match "ogn-056-298")
         if (filters.id) {
@@ -213,6 +220,8 @@ function resetFilters() {
     document.getElementById('search-name').value = '';
     document.getElementById('search-id').value = '';
     document.getElementById('search-ability').value = '';
+    document.getElementById('price-min').value = '';
+    document.getElementById('price-max').value = '';
     document.getElementById('energy-min').value = '';
     document.getElementById('energy-max').value = '';
     document.getElementById('might-min').value = '';
@@ -387,6 +396,7 @@ async function initCardSearch() {
     // Real-time search on Enter key
     const searchInputs = [
         'search-name', 'search-id', 'search-ability',
+        'price-min', 'price-max',
         'energy-min', 'energy-max', 'might-min', 'might-max'
     ];
 
