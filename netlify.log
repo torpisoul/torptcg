@@ -1,0 +1,95 @@
+⬥ Injecting environment variable values for all scopes
+⬥ Ignored general context env var: LANG (defined in process)
+⬥ No app server detected. Using simple static server
+⬥ Running static server from "app"
+⬥ Setting up local dev server
+
+⬥ Static server listening to 3999
+⬥ Loaded function stripe-webhook
+⬥ Loaded function inventory
+⬥ Loaded function debug-inventory
+⬥ Loaded function debug-dual-bin
+⬥ Loaded function check-master-inventory
+⬥ Loaded function products
+⬥ Loaded function fix-dual-cards
+⬥ Loaded function check-inventory-response
+⬥ Loaded function config
+⬥ Loaded function cards
+⬥ Loaded function bin-fetcher
+⬥ Loaded function card-inventory
+⠋ Setting up the Edge Functions environment. This may take a couple of minutes.
+
+   ╭─────────────────────── ⬥  ────────────────────────╮
+   │                                                   │
+   │   Local dev server ready: http://localhost:8888   │
+   │                                                   │
+   ╰───────────────────────────────────────────────────╯
+
+(node:7829) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Request from ::1: GET /.netlify/functions/inventory?t=1765204568143
+[INVENTORY] Function invoked
+[INVENTORY] Method: GET
+[INVENTORY] Fetching master inventory...
+[FETCHING] Bin 692ed2dbae596e708f7e68f9
+Request from ::1: GET /.netlify/functions/cards
+Cards function invoked (JSONBin version)
+Fetching card data from JSONBin...
+[INVENTORY] Found 32 items in master inventory
+[INVENTORY] Grouped into 7 bins
+[INVENTORY] Fetching bin 692da2d1d0ea881f400b9ff3 for 1 items
+[FETCHING] Bin 692da2d1d0ea881f400b9ff3
+[INVENTORY] Fetching bin 692da2d2d0ea881f400b9ff6 for 3 items
+[FETCHING] Bin 692da2d2d0ea881f400b9ff6
+[INVENTORY] Fetching bin 692da2d3d0ea881f400b9ffc for 2 items
+[FETCHING] Bin 692da2d3d0ea881f400b9ffc
+[INVENTORY] Fetching bin 692da2d443b1c97be9d09818 for 2 items
+[FETCHING] Bin 692da2d443b1c97be9d09818
+[INVENTORY] Fetching bin 692da2d543b1c97be9d0981c for 2 items
+[FETCHING] Bin 692da2d543b1c97be9d0981c
+[INVENTORY] Fetching bin 692da2d6d0ea881f400ba004 for 4 items
+[FETCHING] Bin 692da2d6d0ea881f400ba004
+[INVENTORY] Fetching bin 692da2d7d0ea881f400ba009 for 18 items
+[FETCHING] Bin 692da2d7d0ea881f400ba009
+[INVENTORY] Error fetching bin 692da2d443b1c97be9d09818: Failed to fetch bin 692da2d443b1c97be9d09818: 429
+[INVENTORY] Error fetching bin 692da2d2d0ea881f400b9ff6: Failed to fetch bin 692da2d2d0ea881f400b9ff6: 429
+[INVENTORY] Product ogs-023-024 not found in bin 692da2d6d0ea881f400ba004
+[INVENTORY] Product ogn-269-298 not found in bin 692da2d6d0ea881f400ba004
+[INVENTORY] Returning 25 enriched products
+Response with status 200 in 3970 ms.
+Request from ::1: GET /.netlify/functions/inventory?t=1765204572194
+[INVENTORY] Function invoked
+[INVENTORY] Method: GET
+[INVENTORY] Fetching master inventory...
+[CACHE HIT] Bin 692ed2dbae596e708f7e68f9
+[INVENTORY] Found 32 items in master inventory
+[INVENTORY] Grouped into 7 bins
+[INVENTORY] Fetching bin 692da2d1d0ea881f400b9ff3 for 1 items
+[CACHE HIT] Bin 692da2d1d0ea881f400b9ff3
+[INVENTORY] Fetching bin 692da2d2d0ea881f400b9ff6 for 3 items
+[FETCHING] Bin 692da2d2d0ea881f400b9ff6
+[INVENTORY] Fetching bin 692da2d3d0ea881f400b9ffc for 2 items
+[CACHE HIT] Bin 692da2d3d0ea881f400b9ffc
+[INVENTORY] Fetching bin 692da2d443b1c97be9d09818 for 2 items
+[FETCHING] Bin 692da2d443b1c97be9d09818
+[INVENTORY] Fetching bin 692da2d543b1c97be9d0981c for 2 items
+[CACHE HIT] Bin 692da2d543b1c97be9d0981c
+[INVENTORY] Fetching bin 692da2d6d0ea881f400ba004 for 4 items
+[CACHE HIT] Bin 692da2d6d0ea881f400ba004
+[INVENTORY] Fetching bin 692da2d7d0ea881f400ba009 for 18 items
+[CACHE HIT] Bin 692da2d7d0ea881f400ba009
+[INVENTORY] Product ogs-023-024 not found in bin 692da2d6d0ea881f400ba004
+[INVENTORY] Product ogn-269-298 not found in bin 692da2d6d0ea881f400ba004
+[INVENTORY] Returning 30 enriched products
+Response with status 200 in 1187 ms.
+  Loaded 71 calm cards
+  Loaded 63 fury cards
+  Loaded 77 order cards
+  Loaded 67 chaos cards
+  Loaded 65 mind cards
+  Loaded 75 body cards
+  Loaded 80 dual cards
+Total cards loaded: 498
+Response with status 200 in 8565 ms.
+Request from ::1: GET /.netlify/functions/card-inventory
+Response with status 200 in 282 ms.

@@ -536,7 +536,11 @@ function toggleOutOfStock() {
     }
 
     // Re-render with current filter
-    renderProducts(currentFilter);
+    if (currentFilter === 'singles' && typeof window.renderCards === 'function') {
+        window.renderCards();
+    } else {
+        renderProducts(currentFilter);
+    }
 }
 
 // Helper to get current filter category

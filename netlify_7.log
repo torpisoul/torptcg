@@ -1,0 +1,5 @@
+⬥ Injecting environment variable values for all scopes
+⬥ Ignored general context env var: LANG (defined in process)
+⬥ No app server detected. Using simple static server
+⬥ Running static server from "app"
+⬥ Could not acquire required 'port': '8888'

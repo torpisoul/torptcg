@@ -32,21 +32,28 @@ async function fetchCards() {
 
         // Fetch inventory and merge
         try {
-            const inventoryResponse = await fetch('/.netlify/functions/card-inventory');
+            const inventoryResponse = await fetch('/.netlify/functions/inventory');
             if (inventoryResponse.ok) {
                 const inventory = await inventoryResponse.json();
 
                 // Create inventory map
                 const inventoryMap = {};
                 inventory.forEach(item => {
-                    inventoryMap[item.cardId] = item.stock;
+                    if (item.id) {
+                        inventoryMap[item.id] = item.stock;
+                    }
                 });
 
                 // Merge stock data into cards
-                cards = cards.map(card => ({
-                    ...card,
-                    stock: inventoryMap[card.id] !== undefined ? inventoryMap[card.id] : null
-                }));
+                cards = cards.map(card => {
+                    // Default to 0 stock if missing from inventory (aligns with Master Inventory behavior where 0-stock items are removed)
+                    let stock = inventoryMap[card.id] !== undefined ? inventoryMap[card.id] : 0;
+
+                    return {
+                        ...card,
+                        stock
+                    };
+                });
             }
         } catch (invError) {
             console.warn('Could not fetch inventory, cards will show without stock:', invError);
@@ -183,8 +190,17 @@ function applyFilters() {
 
         // Type filter
         if (filters.type) {
-            const cardType = card.cardType?.type?.[0]?.id;
-            if (cardType !== filters.type) return false;
+            const typeId = card.cardType?.type?.[0]?.id;
+            const superTypes = (card.cardType?.superType || []).map(st => st.id);
+
+            if (filters.type === 'legend') {
+                if (typeId !== 'legend') return false;
+            } else if (filters.type === 'signature') {
+                // Signature Spells are Spells with Signature supertype
+                if (typeId !== 'spell' || !superTypes.includes('signature')) return false;
+            } else {
+                if (typeId !== filters.type) return false;
+            }
         }
 
         // Rarity filter
@@ -210,7 +226,6 @@ function applyFilters() {
     });
 
     renderCards();
-    updateResultsCount();
 }
 
 /**
@@ -233,7 +248,6 @@ function resetFilters() {
 
     filteredCards = [...allCards];
     renderCards();
-    updateResultsCount();
 }
 
 /**
@@ -243,11 +257,7 @@ function resetFilters() {
  * Get stock status text for display
  */
 function getCardStockStatus(card) {
-    const stock = card.stock !== undefined ? card.stock : null;
-
-    if (stock === null) {
-        return 'Out of Stock'; // Default when no stock data
-    }
+    const stock = card.stock !== undefined ? card.stock : 0;
 
     if (stock === 0) {
         return 'Out of Stock';
@@ -262,11 +272,7 @@ function getCardStockStatus(card) {
  * Get stock status CSS class
  */
 function getCardStockClass(card) {
-    const stock = card.stock !== undefined ? card.stock : null;
-
-    if (stock === null) {
-        return 'stock-out'; // Default when no stock data
-    }
+    const stock = card.stock !== undefined ? card.stock : 0;
 
     if (stock === 0) {
         return 'stock-out';
@@ -281,9 +287,8 @@ function getCardStockClass(card) {
  * Check if card can be purchased
  */
 function canPurchaseCard(card) {
-    const stock = card.stock !== undefined ? card.stock : null;
-    // Allow purchase if stock is null (no data) or stock > 0
-    return stock !== null && stock > 0;
+    const stock = card.stock !== undefined ? card.stock : 0;
+    return stock > 0;
 }
 
 /**
@@ -375,7 +380,6 @@ async function initCardSearch() {
 
     // Render initial cards
     renderCards();
-    updateResultsCount();
 
     // Cache all card images in the background
     const imageUrls = allCards
@@ -443,9 +447,8 @@ function renderCards() {
     let cardsToDisplay = filteredCards;
     if (!showOutOfStock) {
         cardsToDisplay = filteredCards.filter(card => {
-            const stock = card.stock !== undefined ? card.stock : null;
-            // Show cards with stock > 0, or cards without stock data
-            return stock === null || stock > 0;
+            const stock = card.stock !== undefined ? card.stock : 0;
+            return stock > 0;
         });
     }
 
