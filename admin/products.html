@@ -458,11 +458,13 @@
 
     <div class="save-indicator" id="save-indicator">✓ Saved</div>
 
+    <script src="../lib/config.js"></script>
+    <script src="../lib/jsonbin-client.js"></script>
     <script>
         let products = [];
         let currentFilter = 'all';
         let editingProductId = null;
-        const PRODUCTS_BIN_ID = '6930a9c3d0ea881f4010f6d3'; // From your setup
+        const PRODUCTS_BIN_ID = window.TorptcgConfig ? window.TorptcgConfig.PRODUCTS_BIN_ID : '692ec5feae596e708f7e5206';
 
         // Load products
         async function loadProducts() {
@@ -470,10 +472,14 @@
             container.innerHTML = '<div class="loading">Loading products...</div>';
 
             try {
-                const response = await fetch('/.netlify/functions/products');
-                if (!response.ok) throw new Error('Failed to fetch products');
+                // Use Client API
+                // We want all products to manage them.
+                // fetchProducts returns enriched products from master inventory + product bins.
+                // However, 'products.html' seems to manage the PRODUCTS_BIN_ID specifically for creating new items.
+                // But let's stick to using the unified fetchProducts which merges everything.
 
-                const data = await response.json();
+                const data = await TorptcgAPI.fetchProducts();
+
                 // Show all categories that we manage
                 products = data.filter(p => ['sealed', 'accessories', 'prints'].includes(p.category));
 
@@ -576,25 +582,21 @@
             if (!product) return;
 
             try {
-                const response = await fetch('/.netlify/functions/inventory', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        productId: productId,
-                        stock: stock,
-                        action: 'set',
-                        binId: PRODUCTS_BIN_ID,
-                        category: product.category
-                    })
-                });
+                // Use Client API
+                // updateStock(productId, delta, action)
+                // for set, delta is the absolute value
+                // We rely on updateStock logic to update master inventory.
+                // If it's a new item not in master inventory but in products list (rare case here as we load from master),
+                // we might need extra logic. But generally fetchProducts loads from master inventory so it should exist.
 
-                if (response.ok) {
+                const result = await TorptcgAPI.updateStock(productId, stock, 'set');
+
+                if (result.success) {
                     product.stock = stock;
                     renderProducts();
                     showSaveIndicator('✓ Stock updated');
                 } else {
-                    const err = await response.json();
-                    alert('Error: ' + (err.error || 'Failed to update stock'));
+                    alert('Error: ' + (result.error || 'Failed to update stock'));
                 }
             } catch (error) {
                 console.error('Error setting stock:', error);
@@ -652,27 +654,71 @@
             };
 
             try {
-                const response = await fetch('/.netlify/functions/products', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: editingProductId ? 'update' : 'add',
-                        product: productData,
-                        binId: PRODUCTS_BIN_ID
-                    })
-                });
+                // Implementing Client-Side "Add/Update Product" Logic
+                // 1. Fetch PRODUCTS_BIN
+                const productsBinId = window.TorptcgConfig.PRODUCTS_BIN_ID;
+                const productsBinData = await TorptcgAPI.fetchBin(productsBinId, true);
 
-                if (response.ok) {
-                    closeModal();
-                    await loadProducts();
-                    showSaveIndicator(editingProductId ? '✓ Product updated' : '✓ Product added');
-                } else {
-                    const err = await response.json();
-                    alert('Error: ' + (err.error || 'Failed to save product'));
+                let currentProducts = [];
+                let isWrapped = false;
+                if (productsBinData.products && Array.isArray(productsBinData.products)) {
+                    currentProducts = productsBinData.products;
+                    isWrapped = true;
+                } else if (Array.isArray(productsBinData)) {
+                    currentProducts = productsBinData;
                 }
+
+                if (editingProductId) {
+                    // UPDATE
+                    const index = currentProducts.findIndex(p => p.id === editingProductId);
+                    if (index >= 0) {
+                        currentProducts[index] = { ...currentProducts[index], ...productData };
+                    }
+                } else {
+                    // ADD
+                    currentProducts.push(productData);
+                }
+
+                // 2. Save back to PRODUCTS_BIN
+                await TorptcgAPI.updateBin(productsBinId, isWrapped ? { products: currentProducts } : currentProducts);
+
+                // 3. Update Master Inventory (Stock Sync)
+                // For new products, we need to add them to master inventory.
+                // For updated products, we update stock.
+
+                // Fetch Master Inventory
+                const masterBinId = window.TorptcgConfig.MASTER_INVENTORY_BIN_ID;
+                const masterData = await TorptcgAPI.fetchBin(masterBinId, true);
+                const inventory = masterData.inventory || [];
+
+                const invIndex = inventory.findIndex(i => i.productId === productData.id);
+
+                if (invIndex >= 0) {
+                    // Update existing
+                    inventory[invIndex].stock = productData.stock;
+                    inventory[invIndex].category = productData.category;
+                    inventory[invIndex].preOrder = productData.madeToOrder; // Mapping madeToOrder to preOrder loosely
+                } else {
+                    // Add new
+                    inventory.push({
+                        productId: productData.id,
+                        binId: productsBinId,
+                        category: productData.category,
+                        stock: productData.stock,
+                        preOrder: productData.madeToOrder
+                    });
+                }
+
+                // Save Master Inventory
+                await TorptcgAPI.updateBin(masterBinId, { inventory: inventory });
+
+                closeModal();
+                await loadProducts();
+                showSaveIndicator(editingProductId ? '✓ Product updated' : '✓ Product added');
+
             } catch (error) {
                 console.error('Error saving product:', error);
-                alert('Failed to save product. Please try again.');
+                alert('Failed to save product. Please try again. ' + error.message);
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Save Product';
@@ -689,23 +735,36 @@
             }
 
             try {
-                const response = await fetch('/.netlify/functions/products', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'delete',
-                        productId: productId,
-                        binId: PRODUCTS_BIN_ID
-                    })
-                });
+                // Implementing Client-Side "Delete Product" Logic
+                // 1. Remove from PRODUCTS_BIN
+                const productsBinId = window.TorptcgConfig.PRODUCTS_BIN_ID;
+                const productsBinData = await TorptcgAPI.fetchBin(productsBinId, true);
 
-                if (response.ok) {
-                    await loadProducts();
-                    showSaveIndicator('✓ Product deleted');
-                } else {
-                    const err = await response.json();
-                    alert('Error: ' + (err.error || 'Failed to delete product'));
+                let currentProducts = [];
+                let isWrapped = false;
+                if (productsBinData.products && Array.isArray(productsBinData.products)) {
+                    currentProducts = productsBinData.products;
+                    isWrapped = true;
+                } else if (Array.isArray(productsBinData)) {
+                    currentProducts = productsBinData;
                 }
+
+                const newProducts = currentProducts.filter(p => p.id !== productId);
+
+                await TorptcgAPI.updateBin(productsBinId, isWrapped ? { products: newProducts } : newProducts);
+
+                // 2. Remove from Master Inventory
+                const masterBinId = window.TorptcgConfig.MASTER_INVENTORY_BIN_ID;
+                const masterData = await TorptcgAPI.fetchBin(masterBinId, true);
+                const inventory = masterData.inventory || [];
+
+                const newInventory = inventory.filter(i => i.productId !== productId);
+
+                await TorptcgAPI.updateBin(masterBinId, { inventory: newInventory });
+
+                await loadProducts();
+                showSaveIndicator('✓ Product deleted');
+
             } catch (error) {
                 console.error('Error deleting product:', error);
                 alert('Failed to delete product. Please try again.');

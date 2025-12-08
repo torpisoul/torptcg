@@ -8,51 +8,36 @@ let showOutOfStock = false;
 // 1. INVENTORY MANAGEMENT SYSTEM
 // ============================================
 
-// Fetch products from inventory endpoint
+// Fetch products from inventory (Client-side implementation)
 async function fetchProducts() {
     try {
-        // Add timestamp to prevent caching
-        const timestamp = new Date().getTime();
-        const response = await fetch(`/.netlify/functions/inventory?t=${timestamp}`);
-        if (!response.ok) {
-            console.warn('Inventory data not available, using fallback data');
+        if (window.TorptcgAPI) {
+            return await window.TorptcgAPI.fetchProducts();
+        } else {
+            console.warn('TorptcgAPI not found, using fallback.');
             return getFallbackProducts();
         }
-        const data = await response.json();
-        // Handle both array and object with products property
-        const products = Array.isArray(data) ? data : (data.products || []);
-        return products;
     } catch (error) {
         console.error('Error loading inventory:', error);
         return getFallbackProducts();
     }
 }
 
-// Update stock for a product (for checkout/purchase)
+// Update stock for a product (Client-side implementation)
 async function updateStock(productId, quantity) {
     try {
-        const response = await fetch('/.netlify/functions/inventory', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                productId: productId,
-                delta: -quantity // Negative for purchase
-            })
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            if (response.status === 409) {
-                // Insufficient stock
-                return { success: false, error: 'insufficient_stock', data: result };
-            }
-            return { success: false, error: 'update_failed', data: result };
+        if (!window.TorptcgAPI) {
+            console.error('TorptcgAPI not available');
+            return { success: false, error: 'api_missing' };
         }
 
-        return { success: true, data: result };
+        const result = await window.TorptcgAPI.updateStock(productId, -quantity);
+
+        if (result.success) {
+            return { success: true, data: result };
+        } else {
+            return result; // contains success: false and error
+        }
     } catch (error) {
         console.error('Error updating stock:', error);
         return { success: false, error: 'network_error' };

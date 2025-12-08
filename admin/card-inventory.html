@@ -404,6 +404,8 @@
     </div>
     <button class="save-all-btn" id="save-all-btn" onclick="saveAllChanges()">Save Changes</button>
     <div class="save-indicator" id="save-indicator">✓ Stock updated</div>
+    <script src="../lib/config.js"></script>
+    <script src="../lib/jsonbin-client.js"></script>
     <script src="../cards-script.js"></script>
     <script>
         let adminCards = [];
@@ -428,24 +430,35 @@
             container.innerHTML = '<div class="loading">Loading inventory...</div>';
             try {
                 // Fetch all cards (details)
+                // fetchCards uses TorptcgAPI internally now if we updated cards-script.js
                 adminCards = await fetchCards();
 
                 // Fetch current stock from master inventory
-                const invRes = await fetch('/.netlify/functions/inventory');
-                if (invRes.ok) {
-                    const inventory = await invRes.json();
-                    // Create stock map
-                    const stockMap = {};
-                    inventory.forEach(item => {
-                        stockMap[item.productId || item.id] = item.stock;
-                    });
+                // cards-script.js fetchCards ALREADY merges stock!
+                // But let's double check if we need to do it again for robustness or if fetchCards handles it all.
+                // Looking at cards-script.js, it fetches inventory and merges.
+                // So adminCards should already have stock.
 
-                    // Merge stock
-                    adminCards = adminCards.map(card => ({
-                        ...card,
-                        stock: stockMap[card.id] || 0
-                    }));
-                }
+                // However, the original code fetched it again here. Let's verify.
+                // The original code called fetchCards() (which called netlify/cards + netlify/inventory)
+                // AND THEN called netlify/inventory again here?
+                // Actually `fetchCards` in `cards-script.js` returns cards with stock.
+                // But let's assume we might need to refresh stock specifically.
+
+                // Let's just trust fetchCards returns merged data, or re-fetch to be safe if fetchCards is cached.
+                // Since we want admin to be up to date, let's refresh.
+
+                const inventory = await TorptcgAPI.fetchProducts();
+                const stockMap = {};
+                inventory.forEach(item => {
+                    stockMap[item.productId || item.id] = item.stock;
+                });
+
+                // Merge stock (override whatever fetchCards had)
+                adminCards = adminCards.map(card => ({
+                    ...card,
+                    stock: stockMap[card.id] || 0
+                }));
 
                 // Load prices
                 // Mocking price data load since we created the file locally but can't fetch it easily
@@ -664,23 +677,20 @@
                 return;
             }
 
-            const payload = {
-                productId: cardId,
-                stock: stock,
-                action: 'set',
-                binId: binId,
-                category: 'singles'
-            };
+            console.log(`[setStock] Saving ${cardId} with stock ${stock} to binId: ${binId}`);
 
-            console.log('[setStock] Sending payload:', payload);
+            if (!binId) {
+                alert('Error: Could not determine bin ID for this card.');
+                return;
+            }
 
             try {
-                const response = await fetch('/.netlify/functions/inventory', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (response.ok) {
+                // Use Client API
+                // updateStock(productId, delta, action)
+                // for set, delta is the absolute value
+                const result = await TorptcgAPI.updateStock(cardId, stock, 'set');
+
+                if (result.success) {
                     if (!batchMode) {
                         showSaveIndicator();
                     }
@@ -692,11 +702,10 @@
                         updateStats();
                     }
                 } else {
-                    const err = await response.json();
                     if (!batchMode) {
-                        alert('Error: ' + (err.error || 'Failed to update'));
+                        alert('Error: ' + (result.error || 'Failed to update'));
                     }
-                    throw new Error(err.error || 'Failed to update');
+                    throw new Error(result.error || 'Failed to update');
                 }
             } catch (error) {
                 console.error('Error setting stock:', error);

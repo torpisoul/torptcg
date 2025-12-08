@@ -14,47 +14,41 @@ const imageCache = new Map();
 
 async function fetchCards() {
     try {
-        const response = await fetch('/.netlify/functions/cards');
-        if (!response.ok) {
-            console.error('Failed to fetch cards:', response.status);
+        if (!window.TorptcgAPI) {
+            console.error('TorptcgAPI not initialized');
             return [];
         }
 
-        const data = await response.json();
-
-        // Handle the nested structure from card-gallery.json
-        let cards = [];
-        if (data.page && data.page.cards && data.page.cards.items) {
-            cards = data.page.cards.items;
-        } else {
-            cards = Array.isArray(data) ? data : (data.cards || []);
-        }
+        // Fetch cards from all domain bins
+        let cards = await window.TorptcgAPI.fetchCards();
 
         // Fetch inventory and merge
         try {
-            const inventoryResponse = await fetch('/.netlify/functions/inventory');
-            if (inventoryResponse.ok) {
-                const inventory = await inventoryResponse.json();
+            // We use fetchProducts because it returns the enriched list (which matches what /.netlify/functions/inventory GET returned)
+            // Or we could use fetchMasterInventory + manual merge if we want just stock.
+            // Using fetchProducts() is safer as it mimics the previous behavior, but let's be efficient.
+            // Actually, cards-script.js previous code expected `inventory` to be a list of objects with `id` and `stock`.
+            // `fetchProducts()` returns exactly that (enriched products).
+            const inventory = await window.TorptcgAPI.fetchProducts();
 
-                // Create inventory map
-                const inventoryMap = {};
-                inventory.forEach(item => {
-                    if (item.id) {
-                        inventoryMap[item.id] = item.stock;
-                    }
-                });
+            // Create inventory map
+            const inventoryMap = {};
+            inventory.forEach(item => {
+                if (item.id) {
+                    inventoryMap[item.id] = item.stock;
+                }
+            });
 
-                // Merge stock data into cards
-                cards = cards.map(card => {
-                    // Default to 0 stock if missing from inventory (aligns with Master Inventory behavior where 0-stock items are removed)
-                    let stock = inventoryMap[card.id] !== undefined ? inventoryMap[card.id] : 0;
+            // Merge stock data into cards
+            cards = cards.map(card => {
+                // Default to 0 stock if missing from inventory (aligns with Master Inventory behavior where 0-stock items are removed)
+                let stock = inventoryMap[card.id] !== undefined ? inventoryMap[card.id] : 0;
 
-                    return {
-                        ...card,
-                        stock
-                    };
-                });
-            }
+                return {
+                    ...card,
+                    stock
+                };
+            });
         } catch (invError) {
             console.warn('Could not fetch inventory, cards will show without stock:', invError);
         }

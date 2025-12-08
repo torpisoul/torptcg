@@ -8,45 +8,55 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Admin Page - Price Trends Widget', () => {
     test('should display the price trends widget and pricing on cards', async ({ page }) => {
-        // Mock Cards API
-        await page.route('**/.netlify/functions/cards', async route => {
+        // Mock JSONBin API calls instead of Netlify functions
+        await page.route('https://api.jsonbin.io/v3/b/*', async route => {
+            const url = route.request().url();
+
+            // Mock Master Inventory
+            if (url.includes(window.TorptcgConfig?.MASTER_INVENTORY_BIN_ID || '692ed2dbae596e708f7e68f9')) {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        record: {
+                            inventory: [
+                                { productId: 'ogn-076-298', stock: 5, binId: 'mock-bin' },
+                                { productId: 'ogs-004-024', stock: 2, binId: 'mock-bin' }
+                            ]
+                        }
+                    })
+                });
+                return;
+            }
+
+            // Mock Product/Card Bins
             await route.fulfill({
                 status: 200,
                 contentType: 'application/json',
                 body: JSON.stringify({
-                    page: {
-                        cards: {
-                            items: [
-                                {
-                                    id: 'ogn-076-298',
-                                    name: 'Yasuo, Remorseful',
-                                    publicCode: 'OGN-076/298',
-                                    stock: 5,
-                                    cardImage: { url: 'https://via.placeholder.com/150' }
-                                },
-                                {
-                                    id: 'ogs-004-024',
-                                    name: 'Yi, Meditative',
-                                    publicCode: 'OGS-004/024',
-                                    stock: 2,
-                                    cardImage: { url: 'https://via.placeholder.com/150' }
-                                }
-                            ]
+                    record: {
+                        page: {
+                            cards: {
+                                items: [
+                                    {
+                                        id: 'ogn-076-298',
+                                        name: 'Yasuo, Remorseful',
+                                        publicCode: 'OGN-076/298',
+                                        stock: 5,
+                                        cardImage: { url: 'https://via.placeholder.com/150' }
+                                    },
+                                    {
+                                        id: 'ogs-004-024',
+                                        name: 'Yi, Meditative',
+                                        publicCode: 'OGS-004/024',
+                                        stock: 2,
+                                        cardImage: { url: 'https://via.placeholder.com/150' }
+                                    }
+                                ]
+                            }
                         }
                     }
                 })
-            });
-        });
-
-        // Mock Inventory API
-        await page.route('**/.netlify/functions/inventory', async route => {
-            await route.fulfill({
-                status: 200,
-                contentType: 'application/json',
-                body: JSON.stringify([
-                    { productId: 'ogn-076-298', stock: 5 },
-                    { productId: 'ogs-004-024', stock: 2 }
-                ])
             });
         });
 
