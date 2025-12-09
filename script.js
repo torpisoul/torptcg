@@ -654,16 +654,32 @@ function openCardModal(product) {
     const setName = product.set?.value?.label || product.set?.label || '';
     const rarity = product.rarity?.label || '';
     const domains = [];
+    const domainIds = [];
     if (product.domain?.values) {
-        product.domain.values.forEach(d => domains.push(d.label));
+        product.domain.values.forEach(d => {
+            domains.push(d.label);
+            if (d.id) domainIds.push(d.id);
+        });
     }
     const cardType = product.cardType?.type?.map(t => t.label).join(', ') || product.type || '';
     const energy = product.energy?.value !== undefined ? product.energy.value : '';
     const might = product.might?.value !== undefined ? product.might.value : '';
 
+    // Determine colored text style based on domains
+    let textStyle = '';
+    if (domainIds.length === 1) {
+        // Single domain: use solid color
+        textStyle = `style="color: var(--domain-${domainIds[0]})"`;
+    } else if (domainIds.length >= 2) {
+        // Dual domain: use gradient
+        // Ensure we fallback to solid color if browser doesn't support clip, but widely supported now
+        // Note: we apply this to a span inside the header/div to avoid layout issues (e.g. inline-block on h2)
+        textStyle = `style="background: linear-gradient(to right, var(--domain-${domainIds[0]}), var(--domain-${domainIds[1]})); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent;"`;
+    }
+
     let infoHTML = `
-        <h2>${title}</h2>
-        <div class="card-price">${price}</div>
+        <h2><span ${textStyle}>${title}</span></h2>
+        <div class="card-price"><span ${textStyle}>${price}</span></div>
         <div class="card-stock ${stockClass}">${stockText}</div>
         
         <div class="card-details">
@@ -799,7 +815,7 @@ function initCardModalHandlers() {
         if (imageWrapper) {
             // Make image clickable
             imageWrapper.style.cursor = 'pointer';
-            imageWrapper.title = 'Click to view details';
+            imageWrapper.title = 'Drag me to the cart, or click for more details';
 
             imageWrapper.addEventListener('click', () => {
                 // Get product data from the card

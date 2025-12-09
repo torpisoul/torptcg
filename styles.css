@@ -93,6 +93,132 @@ nav {
     color: var(--accent);
 }
 
+/* Shopping Cart Icon */
+.cart-icon-wrapper {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.cart-icon-wrapper:hover {
+    background: var(--glass-bg);
+}
+
+.cart-icon-wrapper svg {
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+}
+
+.cart-icon-wrapper:hover svg {
+    color: var(--primary);
+    transform: scale(1.1);
+}
+
+/* Cart Badge */
+.cart-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--gradient-main);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(255, 140, 66, 0.5);
+    transition: all 0.3s ease;
+}
+
+.cart-badge.hidden {
+    display: none;
+}
+
+/* Cart Tooltip */
+.cart-tooltip {
+    position: absolute;
+    bottom: -45px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
+    color: var(--primary);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    border: 1px solid var(--primary);
+    box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
+    z-index: 1000;
+}
+
+.cart-tooltip.show {
+    opacity: 1;
+    animation: tooltipPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes tooltipPulse {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+/* Jiggle Animation */
+@keyframes jiggle {
+
+    0%,
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: rotate(-5deg) scale(1.1);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: rotate(5deg) scale(1.1);
+    }
+}
+
+.cart-icon-wrapper.jiggle svg {
+    animation: jiggle 0.6s ease-in-out;
+}
+
+/* Drop Zone Highlight */
+.cart-icon-wrapper.drop-zone-active {
+    background: rgba(255, 140, 66, 0.2);
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 20px rgba(255, 140, 66, 0.5);
+    transform: scale(1.2);
+}
+
+/* Dragging State for Cards */
+.product-card.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+    cursor: grabbing;
+}
+
 /* --- HERO SECTION --- */
 .hero {
     background: url('hero-bg.png') no-repeat center center/cover;
@@ -446,6 +572,16 @@ nav {
     border-width: 1px;
 }
 
+/* Hide Add to Cart button on product cards (use drag-and-drop instead) */
+.product-card .btn-add {
+    display: none;
+}
+
+/* Keep the button visible in modals */
+.modal-card-info .btn-add {
+    display: inline-block;
+}
+
 .btn-add:hover {
     background: var(--primary);
     color: white;
@@ -710,6 +846,24 @@ label {
     .results-count-small {
         margin-left: 0;
         text-align: center;
+    }
+
+    /* Cart icon responsive */
+    .cart-tooltip {
+        bottom: -50px;
+        right: -10px;
+        font-size: 0.75rem;
+        padding: 6px 10px;
+    }
+
+    .cart-icon-wrapper {
+        padding: 6px;
+    }
+
+    .cart-badge {
+        font-size: 0.65rem;
+        padding: 1px 4px;
+        min-width: 16px;
     }
 }
 
@@ -1241,21 +1395,131 @@ label {
     border: 1px solid var(--glass-border);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .modal-content {
-        flex-direction: column;
-        align-items: center;
+/* Responsive - Tablet */
+@media (max-width: 1024px) {
+    .card-modal.show {
+        padding: 15px;
     }
 
     .modal-card-image {
-        max-width: 100%;
+        max-width: 400px;
+        max-height: 80vh;
+    }
+
+    .modal-card-info {
+        max-height: 80vh;
+    }
+
+    .modal-card-info h2 {
+        font-size: 2rem;
+    }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+    .card-modal.show {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        overflow-y: auto;
+    }
+
+    .modal-card-image {
+        max-width: 90vw;
+        max-height: 50vh;
+        margin-bottom: 20px;
+    }
+
+    .modal-card-info {
+        flex: 1;
+        position: absolute;
+        top: 31rem;
+        padding-right: 3rem;
+        padding-left: 3rem;
+        width: 100%;
+    }
+
+    .modal-card-info h2 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
+
+    .modal-card-info .card-price {
+        font-size: 1.5rem;
+        margin: 15px 0;
+    }
+
+    .modal-card-info .detail-label {
+        min-width: 100px;
+        font-size: 0.9rem;
+    }
+
+    .modal-card-info .detail-value {
+        font-size: 0.9rem;
+    }
+
+    .modal-card-info .modal-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-card-info .btn {
+        width: 100%;
+        padding: 12px 20px;
     }
 
     .modal-close {
         top: 10px;
-        right: 20px;
+        right: 15px;
         font-size: 40px;
+    }
+}
+
+/* Responsive - Small Mobile */
+@media (max-width: 480px) {
+    .card-modal.show {
+        padding: 5px;
+    }
+
+    .modal-card-image {
+        max-width: 95vw;
+        max-height: 45vh;
+        border-radius: 12px;
+    }
+
+    .modal-card-info h2 {
+        font-size: 1.5rem;
+    }
+
+    .modal-card-info .card-price {
+        font-size: 1.3rem;
+    }
+
+    .modal-card-info .detail-row {
+        flex-direction: column;
+        gap: 5px;
+        padding: 8px 0;
+    }
+
+    .modal-card-info .detail-label {
+        min-width: auto;
+        font-size: 0.85rem;
+    }
+
+    .modal-card-info .detail-value {
+        font-size: 0.85rem;
+        padding-left: 0;
+    }
+
+    .modal-card-info .card-stock {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+
+    .modal-close {
+        top: 5px;
+        right: 10px;
+        font-size: 35px;
     }
 }
 
