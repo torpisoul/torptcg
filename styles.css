@@ -837,7 +837,7 @@ label {
     border: 2px solid transparent;
     background-image:
         /* Top layer */
-        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        linear-gradient(var(--bg-card), var(--bg-card)),
         /* Bottom layer */
         linear-gradient(to bottom right, var(--domain-fury), var(--domain-mind));
     background-origin: border-box;
@@ -851,7 +851,7 @@ label {
     border: 2px solid transparent;
     background-image:
         /* Top layer */
-        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        linear-gradient(var(--bg-card), var(--bg-card)),
         /* Bottom layer */
         linear-gradient(to bottom right, var(--domain-calm), var(--domain-body));
     background-origin: border-box;
@@ -864,7 +864,7 @@ label {
     border: 2px solid transparent;
     background-image:
         /* Top layer */
-        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        linear-gradient(var(--bg-card), var(--bg-card)),
         /* Bottom layer */
         linear-gradient(to bottom right, var(--domain-fury), var(--domain-body));
     background-origin: border-box;
@@ -877,7 +877,7 @@ label {
     border: 2px solid transparent;
     background-image:
         /* Top layer */
-        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        linear-gradient(var(--bg-card), var(--bg-card)),
         /* Bottom layer */
         linear-gradient(to bottom right, var(--domain-calm), var(--domain-mind));
     background-origin: border-box;
@@ -890,7 +890,7 @@ label {
     border: 2px solid transparent;
     background-image:
         /* Top layer */
-        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        linear-gradient(var(--bg-card), var(--bg-card)),
         /* Bottom layer */
         linear-gradient(to bottom right, var(--domain-fury), var(--domain-order));
     background-origin: border-box;
@@ -903,7 +903,7 @@ label {
     border: 2px solid transparent;
     background-image:
         /* Top layer */
-        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        linear-gradient(var(--bg-card), var(--bg-card)),
         /* Bottom layer */
         linear-gradient(to bottom right, var(--domain-calm), var(--domain-chaos));
     background-origin: border-box;
@@ -916,7 +916,7 @@ label {
     border: 2px solid transparent;
     background-image:
         /* Top layer */
-        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        linear-gradient(var(--bg-card), var(--bg-card)),
         /* Bottom layer */
         linear-gradient(to bottom right, var(--domain-mind), var(--domain-order));
     background-origin: border-box;
@@ -929,7 +929,7 @@ label {
     border: 2px solid transparent;
     background-image:
         /* Top layer */
-        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        linear-gradient(var(--bg-card), var(--bg-card)),
         /* Bottom layer */
         linear-gradient(to bottom right, var(--domain-mind), var(--domain-chaos));
     background-origin: border-box;
@@ -942,7 +942,7 @@ label {
     border: 2px solid transparent;
     background-image:
         /* Top layer */
-        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        linear-gradient(var(--bg-card), var(--bg-card)),
         /* Bottom layer */
         linear-gradient(to bottom right, var(--domain-body), var(--domain-order));
     background-origin: border-box;
@@ -955,7 +955,7 @@ label {
     border: 2px solid transparent;
     background-image:
         /* Top layer */
-        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        linear-gradient(var(--bg-card), var(--bg-card)),
         /* Bottom layer */
         linear-gradient(to bottom right, var(--domain-body), var(--domain-chaos));
     background-origin: border-box;
@@ -968,7 +968,7 @@ label {
     border: 2px solid transparent;
     background-image:
         /* Top layer */
-        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        linear-gradient(var(--bg-card), var(--bg-card)),
         /* Bottom layer */
         linear-gradient(to bottom right, var(--domain-calm), var(--domain-order));
     background-origin: border-box;
@@ -981,7 +981,7 @@ label {
     border: 2px solid transparent;
     background-image:
         /* Top layer */
-        linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)),
+        linear-gradient(var(--bg-card), var(--bg-card)),
         /* Bottom layer */
         linear-gradient(to bottom right, var(--domain-fury), var(--domain-chaos));
     background-origin: border-box;
