@@ -460,7 +460,7 @@ function renderCards() {
     });
 
     updateResultsCount(cardsToDisplay.length);
-    
+
     // Initialize 3D tilt effect for card gallery
     setTimeout(() => {
         if (typeof initTiltEffect === 'function') {

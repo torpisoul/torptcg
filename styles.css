@@ -352,8 +352,8 @@ nav {
 
 .tag-group {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 11rem;
+    left: 0.5rem;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
     border-radius: 20px;
@@ -1150,6 +1150,7 @@ label {
     overflow-y: auto;
     max-height: 90vh;
     padding-right: 20px;
+    padding-left: 20px;
 }
 
 .modal-card-info h2 {
@@ -1291,7 +1292,7 @@ label {
     left: 0;
     width: 100%;
     /* Background gradient/color to make text readable */
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 100%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 80%, rgba(0, 0, 0, 0) 100%);
     padding: 20px;
     opacity: 1;
     transition: opacity 0.3s ease-in-out;
