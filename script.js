@@ -893,12 +893,14 @@ createProductCard = function (product) {
         <div class="product-card${singleCardClass}" data-product-id="${product.id}"${domainAttr}${domainAttr2}>
             <div class="card-image-wrapper">
                 <img src="${product.image}" alt="${product.title}" class="product-image">
-                <span class="category-tag">${getCategoryName(product.category)}</span>
+                <div class="tag-group">
+                    <span class="category-tag">${getCategoryName(product.category)}</span>
+                    <span class="product-price-tag">${priceDisplay}</span>
+                </div>
             </div>
             <div class="product-details">
                 <div class="stock-badge ${stockClass}">${stockStatus}</div>
                 <h3 class="product-title">${product.title}</h3>
-                <div class="product-price">${priceDisplay}</div>
                 ${buttonHTML}
             </div>
         </div>

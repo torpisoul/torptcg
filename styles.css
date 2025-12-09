@@ -425,11 +425,8 @@ nav {
     transition: box-shadow 0.3s ease, border-color 0.3s ease;
     position: relative;
     transform-style: preserve-3d;
-    cursor: grab;
-}
-
-.product-card:active {
-    cursor: grabbing;
+    display: flex;
+    flex-direction: column;
 }
 
 .product-card:hover {
@@ -479,24 +476,47 @@ nav {
     transition: transform 0.3s ease;
 }
 
-.category-tag {
+.tag-group {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 11rem;
+    left: 0.5rem;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
-    padding: 5px 12px;
     border-radius: 20px;
-    font-size: 0.75rem;
-    text-transform: uppercase;
     border: 1px solid var(--glass-border);
     z-index: 5;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.category-tag {
+    position: static;
+    background: none;
+    border: none;
+    padding: 3px 8px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.product-price-tag {
+    padding: 3px 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 1px solid var(--glass-border);
 }
 
 .product-details {
     opacity: 1;
     transition: opacity 0.3s ease-in-out;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex-grow: 1;
+    margin-top: auto;
 }
 
 .stock-badge {
@@ -524,18 +544,15 @@ nav {
 }
 
 .product-price {
-    font-size: 1.4rem;
-    color: var(--accent);
-    font-weight: 700;
-    margin-bottom: 20px;
+    display: none;
 }
 
 .btn-add {
     width: 100%;
-    margin-top: 14px;
-    padding: 10px;
+    margin-top: 0;
+    padding: 0 10px;
     background: transparent;
-    border: 1px solid var(--primary);
+    border: 0 solid var(--primary);
     color: var(--primary);
     border-radius: 8px;
     cursor: pointer;
@@ -543,6 +560,16 @@ nav {
     font-weight: 600;
     position: relative;
     overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+}
+
+.product-card:hover .btn-add {
+    margin-top: 14px;
+    padding: 10px;
+    max-height: 60px;
+    opacity: 1;
+    border-width: 1px;
 }
 
 /* Hide Add to Cart button on product cards (use drag-and-drop instead) */
@@ -1278,6 +1305,7 @@ label {
     overflow-y: auto;
     max-height: 90vh;
     padding-right: 20px;
+    padding-left: 20px;
 }
 
 .modal-card-info h2 {
@@ -1529,7 +1557,7 @@ label {
     left: 0;
     width: 100%;
     /* Background gradient/color to make text readable */
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0));
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 80%, rgba(0, 0, 0, 0) 100%);
     padding: 20px;
     opacity: 1;
     transition: opacity 0.3s ease-in-out;
@@ -1538,16 +1566,15 @@ label {
     /* Allow clicking buttons */
 }
 
-/* Hide details on hover */
+/* Show details on hover */
 .product-card.single-card:hover .product-details {
-    opacity: 0;
-    pointer-events: none;
-    /* Prevent clicking hidden buttons */
+    opacity: 1;
+    pointer-events: auto;
 }
 
-/* Hide category tag on hover as well */
-.product-card.single-card:hover .category-tag {
-    opacity: 0;
+/* Ensure tag group stays visible */
+.product-card.single-card:hover .tag-group {
+    opacity: 1;
     transition: opacity 0.3s ease;
 }
 
