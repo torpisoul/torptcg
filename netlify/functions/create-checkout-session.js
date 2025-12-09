@@ -1,4 +1,11 @@
 // netlify/functions/create-checkout-session.js
+// Try to load .env file if available (useful for local dev if not using netlify dev or if it fails to inject)
+try {
+    require('dotenv').config();
+} catch (e) {
+    // Ignore if dotenv is missing or fails
+}
+
 const inventoryFunction = require('./inventory');
 
 // Initialize Stripe conditionally
@@ -26,11 +33,19 @@ exports.handler = async function(event, context) {
     // Check initialization
     if (!stripe) {
         console.error('Stripe initialization failed:', stripeInitError);
+
+        // Prepare debug info: list available environment keys (excluding values for security)
+        const availableKeys = Object.keys(process.env).sort();
+
         return {
             statusCode: 500,
             body: JSON.stringify({
                 error: 'Payment system configuration error',
-                details: stripeInitError
+                details: stripeInitError,
+                debug: {
+                    message: "Available environment variables (names only):",
+                    keys: availableKeys
+                }
             })
         };
     }
