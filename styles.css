@@ -561,9 +561,18 @@ nav {
     overflow: hidden;
 }
 
-/* Hide Add to Cart button on product cards (use drag-and-drop instead) */
+/* Add to Cart button on product cards (initially hidden, visible on hover) */
 .product-card .btn-add {
-    display: none;
+    display: block;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none; /* Prevent clicking when hidden */
+}
+
+.product-card:hover .btn-add {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 /* Keep the button visible in modals */
