@@ -351,30 +351,28 @@ async function handleAddToCart(productId) {
         return;
     }
 
-    // Update stock (decrease by 1)
-    const result = await updateStock(productId, 1);
+    // Add to basket instead of immediate deduction
+    try {
+        window.basketManager.addItem(product, 1);
 
-    if (result.success) {
-        alert('✅ Added to cart! Stock updated.');
-        // Refresh the product display
-        const currentFilter = getCurrentFilterCategory();
-        if (currentFilter === 'all-categories') {
-            renderProductsByCategory();
-        } else {
-            renderProducts(currentFilter);
+        // Show feedback (toast or simple alert for now)
+        // Check if we want to show a toast or just update the UI
+        const btn = document.querySelector(`.product-card[data-product-id="${productId}"] .btn-add`);
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = 'Added!';
+            btn.classList.add('btn-success');
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove('btn-success');
+            }, 1500);
         }
-    } else {
-        if (result.error === 'insufficient_stock') {
-            alert('❌ Sorry, this item is now out of stock. The page will refresh.');
-            const currentFilter = getCurrentFilterCategory();
-            if (currentFilter === 'all-categories') {
-                renderProductsByCategory();
-            } else {
-                renderProducts(currentFilter);
-            }
-        } else {
-            alert('❌ Unable to add to cart. Please try again.');
-        }
+
+        // Optional: Open basket modal automatically?
+        // For now, let's just update the badge (handled by event listener) and maybe show a small notification if needed.
+    } catch (e) {
+        console.error('Error adding to basket:', e);
+        alert('Could not add item to basket.');
     }
 }
 
