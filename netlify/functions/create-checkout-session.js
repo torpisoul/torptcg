@@ -1,10 +1,53 @@
 // netlify/functions/create-checkout-session.js
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+// Try to load .env file if available (useful for local dev if not using netlify dev or if it fails to inject)
+try {
+    require('dotenv').config();
+} catch (e) {
+    // Ignore if dotenv is missing or fails
+}
+
 const inventoryFunction = require('./inventory');
 
+// Initialize Stripe conditionally
+let stripe;
+let stripeInitError = null;
+
+try {
+    if (process.env.STRIPE_SECRET_KEY) {
+        stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+    } else {
+        stripeInitError = 'STRIPE_SECRET_KEY environment variable is missing.';
+        console.warn('⚠️ ' + stripeInitError);
+    }
+} catch (err) {
+    stripeInitError = `Failed to load Stripe module: ${err.message}`;
+    console.error(stripeInitError);
+}
+
 exports.handler = async function(event, context) {
+    // Only allow POST
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Method Not Allowed' };
+    }
+
+    // Check initialization
+    if (!stripe) {
+        console.error('Stripe initialization failed:', stripeInitError);
+
+        // Prepare debug info: list available environment keys (excluding values for security)
+        const availableKeys = Object.keys(process.env).sort();
+
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                error: 'Payment system configuration error',
+                details: stripeInitError,
+                debug: {
+                    message: "Available environment variables (names only):",
+                    keys: availableKeys
+                }
+            })
+        };
     }
 
     try {
@@ -15,19 +58,12 @@ exports.handler = async function(event, context) {
         }
 
         // 1. Validate Stock and Price
-        // We need to fetch current inventory.
-        // Reusing inventory function logic by mocking a request?
-        // Or better, we should extract the "read inventory" logic.
-        // For now, let's call the inventory endpoint via internal invocation or duplicating logic?
-        // Since we are in the same environment, we can require the file if it exports the reading logic.
-        // Looking at inventory.js, it seems it interacts with JSONBin.
-
-        // Let's assume we can fetch all products first.
         const mockEvent = { httpMethod: 'GET', queryStringParameters: {} };
         const inventoryResponse = await inventoryFunction.handler(mockEvent, context);
 
         if (inventoryResponse.statusCode !== 200) {
-            throw new Error('Could not fetch inventory for validation');
+            console.error('Inventory fetch failed:', inventoryResponse.body);
+            throw new Error(`Could not fetch inventory for validation: ${inventoryResponse.statusCode}`);
         }
 
         const inventoryData = JSON.parse(inventoryResponse.body);
@@ -48,9 +84,6 @@ exports.handler = async function(event, context) {
             }
 
             // Verify price (security: always use server-side price)
-            // Note: Floating point comparison might be tricky, but usually exact matches for prices.
-            // cartItem.price comes from client, we ignore it and use product.price
-
             lineItems.push({
                 price_data: {
                     currency: 'gbp',
@@ -79,7 +112,6 @@ exports.handler = async function(event, context) {
             metadata: {
                 // Store simplified cart in metadata for webhook
                 // Warning: Metadata has 500 char limit.
-                // We'll store a compact JSON string.
                 cart_items: JSON.stringify(metadataItems).substring(0, 500)
             }
         });
