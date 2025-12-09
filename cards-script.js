@@ -343,12 +343,14 @@ function createCardElement(card) {
     div.innerHTML = `
     <div class="card-image-wrapper">
         <img src="${imageUrl}" alt="${name}" class="product-image" loading="lazy">
-        <span class="category-tag">Single Card</span>
+        <div class="tag-group">
+            <span class="category-tag">Single Card</span>
+            <span class="product-price-tag">${priceDisplay}</span>
+        </div>
     </div>
     <div class="product-details">
         <div class="stock-badge ${stockClass}">${stockStatus}</div>
         <h3 class="product-title">${name}</h3>
-        <div class="product-price">${priceDisplay}</div>
         <button class="btn-add" ${!purchasable ? 'disabled' : ''} onclick="${buttonAction}">
             ${buttonText}
         </button>
@@ -458,7 +460,7 @@ function renderCards() {
     });
 
     updateResultsCount(cardsToDisplay.length);
-    
+
     // Initialize 3D tilt effect for card gallery
     setTimeout(() => {
         if (typeof initTiltEffect === 'function') {
