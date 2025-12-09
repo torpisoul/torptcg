@@ -3,26 +3,35 @@ const inventoryFunction = require('./inventory');
 
 // Initialize Stripe conditionally
 let stripe;
+let stripeInitError = null;
+
 try {
     if (process.env.STRIPE_SECRET_KEY) {
         stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
     } else {
-        console.warn('⚠️ STRIPE_SECRET_KEY is missing. Checkout will fail.');
+        stripeInitError = 'STRIPE_SECRET_KEY environment variable is missing.';
+        console.warn('⚠️ ' + stripeInitError);
     }
 } catch (err) {
-    console.error('Failed to initialize Stripe:', err);
+    stripeInitError = `Failed to load Stripe module: ${err.message}`;
+    console.error(stripeInitError);
 }
 
 exports.handler = async function(event, context) {
+    // Only allow POST
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
+    // Check initialization
     if (!stripe) {
-        console.error('Stripe is not initialized. Check STRIPE_SECRET_KEY.');
+        console.error('Stripe initialization failed:', stripeInitError);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Payment system not configured (Missing Stripe Key)' })
+            body: JSON.stringify({
+                error: 'Payment system configuration error',
+                details: stripeInitError
+            })
         };
     }
 
@@ -35,7 +44,6 @@ exports.handler = async function(event, context) {
 
         // 1. Validate Stock and Price
         const mockEvent = { httpMethod: 'GET', queryStringParameters: {} };
-        // We need to pass the context, but also ensure environment variables are available if inventory relies on them
         const inventoryResponse = await inventoryFunction.handler(mockEvent, context);
 
         if (inventoryResponse.statusCode !== 200) {
