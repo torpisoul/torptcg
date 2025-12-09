@@ -1224,3 +1224,69 @@ label {
         font-size: 40px;
     }
 }
+
+/* ============================================
+   SINGLE CARD SPECIFIC STYLES
+   ============================================ */
+
+.product-card.single-card {
+    /* Set aspect ratio to match standard card dimensions (2.5 x 3.5 inches) */
+    aspect-ratio: 2.5 / 3.5;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    /* Remove padding or borders that might distort the size if necessary */
+    /* Maintain existing border/radius but ensure content fills it */
+}
+
+.product-card.single-card .card-image-wrapper {
+    height: 100%;
+    width: 100%;
+    /* Override any fixed height from general styles */
+}
+
+.product-card.single-card .product-image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Position details as an overlay */
+.product-card.single-card .product-details {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    /* Background gradient/color to make text readable */
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0));
+    padding: 20px;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 10;
+    pointer-events: auto;
+    /* Allow clicking buttons */
+}
+
+/* Hide details on hover */
+.product-card.single-card:hover .product-details {
+    opacity: 0;
+    pointer-events: none;
+    /* Prevent clicking hidden buttons */
+}
+
+/* Hide category tag on hover as well */
+.product-card.single-card:hover .category-tag {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Ensure category tag stays visible otherwise */
+.product-card.single-card .category-tag {
+    transition: opacity 0.3s ease;
+}
+
+/* Ensure the card maintains shape in flex/grid containers */
+.product-card.single-card {
+    width: 100%;
+}

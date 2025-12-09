@@ -296,7 +296,7 @@ function canPurchaseCard(card) {
  */
 function createCardElement(card) {
     const div = document.createElement('div');
-    div.className = 'product-card';
+    div.className = 'product-card single-card';
     div.setAttribute('data-product-id', card.id || card.publicCode);
 
     // Add domain data attribute for CSS styling

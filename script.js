@@ -300,8 +300,10 @@ function createProductCard(product) {
         }
     }
 
+    const singleCardClass = product.category === 'singles' ? ' single-card' : '';
+
     return `
-        <div class="product-card" data-product-id="${product.id}"${domainAttr}${domainAttr2}>
+        <div class="product-card${singleCardClass}" data-product-id="${product.id}"${domainAttr}${domainAttr2}>
             <div class="card-image-wrapper">
                 <img src="${product.image}" alt="${product.title}" class="product-image">
                 <span class="category-tag">${getCategoryName(product.category)}</span>
@@ -869,8 +871,10 @@ createProductCard = function (product) {
         }
     }
 
+    const singleCardClass = product.category === 'singles' ? ' single-card' : '';
+
     return `
-        <div class="product-card" data-product-id="${product.id}"${domainAttr}${domainAttr2}>
+        <div class="product-card${singleCardClass}" data-product-id="${product.id}"${domainAttr}${domainAttr2}>
             <div class="card-image-wrapper">
                 <img src="${product.image}" alt="${product.title}" class="product-image">
                 <span class="category-tag">${getCategoryName(product.category)}</span>
