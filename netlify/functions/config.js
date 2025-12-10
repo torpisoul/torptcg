@@ -18,7 +18,7 @@ module.exports = {
     EXTERNAL_JSON_URL: JSONBIN_INVENTORY_BIN,
     MASTER_INVENTORY_BIN_ID: process.env.MASTER_INVENTORY_BIN_ID || null,
     // Fix: Use the correct product bin ID (from env or hardcoded fallback that works)
-    PRODUCTS_BIN_ID: process.env.PRODUCTS_BIN_ID || process.env.PRODUCTS_BIN_I || '692ec5feae596e708f7e5206',
+    PRODUCTS_BIN_ID: process.env.PRODUCTS_BIN_ID || process.env.PRODUCTS_BIN_I,
 
     // Card Gallery Bins
     CARD_GALLERY_BIN: process.env.CARD_GALLERY_BIN || null,

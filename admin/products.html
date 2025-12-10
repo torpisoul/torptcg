@@ -462,7 +462,7 @@
         let products = [];
         let currentFilter = 'all';
         let editingProductId = null;
-        const PRODUCTS_BIN_ID = '6930a9c3d0ea881f4010f6d3'; // From your setup
+        const PRODUCTS_BIN_ID = process.env.PRODUCTS_BIN_ID; // From your setup
 
         // Load products
         async function loadProducts() {
