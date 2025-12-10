@@ -3,18 +3,18 @@ const https = require('https');
 
 exports.handler = async function (event, context) {
     const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY;
-    const DUAL_BIN_ID = process.env.DUAL_BIN_ID || '692da2d7d0ea881f400ba009';
+    const DUAL_BIN_ID = process.env.DUAL_BIN_ID;
 
     const headers = {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*"
     };
 
-    if (!JSONBIN_API_KEY) {
+    if (!JSONBIN_API_KEY || !DUAL_BIN_ID) {
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({ error: 'Missing API key' })
+            body: JSON.stringify({ error: 'Missing configuration' })
         };
     }
 

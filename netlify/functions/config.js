@@ -2,7 +2,7 @@
 // Export configuration for all functions
 
 const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY;
-const JSONBIN_INVENTORY_BIN = process.env.JSONBIN_INVENTORY_BIN || "https://api.jsonbin.io/v3/b/6927370eae596e708f7294be";
+const JSONBIN_INVENTORY_BIN = process.env.JSONBIN_INVENTORY_BIN;
 
 if (!JSONBIN_API_KEY) {
     console.warn('⚠️  WARNING: JSONBIN_API_KEY not set in environment variables.');
@@ -17,8 +17,8 @@ module.exports = {
     // Inventory Bins
     EXTERNAL_JSON_URL: JSONBIN_INVENTORY_BIN,
     MASTER_INVENTORY_BIN_ID: process.env.MASTER_INVENTORY_BIN_ID || null,
-    // Fix: Use the correct product bin ID (from env or hardcoded fallback that works)
-    PRODUCTS_BIN_ID: process.env.PRODUCTS_BIN_ID || process.env.PRODUCTS_BIN_I,
+    // Fix: Use the correct product bin ID (from env)
+    PRODUCTS_BIN_ID: process.env.PRODUCTS_BIN_ID,
 
     // Card Gallery Bins
     CARD_GALLERY_BIN: process.env.CARD_GALLERY_BIN || null,
