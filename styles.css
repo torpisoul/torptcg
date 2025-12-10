@@ -543,7 +543,6 @@ nav {
     font-size: 1.4rem;
     color: var(--accent);
     font-weight: 700;
-    margin-bottom: 20px;
 }
 
 .btn-add {
@@ -566,7 +565,8 @@ nav {
     display: block;
     opacity: 0;
     transform: translateY(10px);
-    pointer-events: none; /* Prevent clicking when hidden */
+    pointer-events: none;
+    /* Prevent clicking when hidden */
 }
 
 .product-card:hover .btn-add {
@@ -1585,6 +1585,8 @@ label {
 .product-card.single-card {
     width: 100%;
 }
+
+
 /* --- CARD ACTION ICON --- */
 .card-action-icon {
     position: absolute;
@@ -1593,7 +1595,8 @@ label {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: var(--bg-card); /* Fallback */
+    background: var(--bg-card);
+    /* Fallback */
     background: rgba(26, 29, 36, 0.8);
     border: 1px solid var(--primary);
     color: var(--primary);
@@ -1603,7 +1606,7 @@ label {
     cursor: pointer;
     z-index: 20;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .card-action-icon:hover {
