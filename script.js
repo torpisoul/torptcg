@@ -847,29 +847,73 @@ renderProducts = async function (filter = 'all') {
 // 9. STRIPE PAYMENT LINK SUPPORT
 // ============================================
 
-// Override createProductCard to add Stripe support
-const _originalCreateProductCard = createProductCard;
-createProductCard = function (product) {
+// ICONS
+const ICONS = {
+    basket: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>`,
+    bell: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>`,
+    ban: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>`,
+    creditCard: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>`
+};
+
+// Animation function
+function animateAndAdd(btnElement, productId) {
+    // Start animation
+    const card = btnElement.closest('.product-card');
+    const img = card.querySelector('.product-image');
+    const cartIcon = document.getElementById('shopping-cart-icon');
+
+    if (img && cartIcon) {
+        const imgRect = img.getBoundingClientRect();
+        const cartRect = cartIcon.getBoundingClientRect();
+
+        const flyingImg = img.cloneNode();
+        flyingImg.classList.add('flying-card');
+        flyingImg.style.width = `${imgRect.width}px`;
+        flyingImg.style.height = `${imgRect.height}px`;
+        flyingImg.style.top = `${imgRect.top}px`;
+        flyingImg.style.left = `${imgRect.left}px`;
+
+        document.body.appendChild(flyingImg);
+
+        // Force reflow
+        void flyingImg.offsetWidth;
+
+        flyingImg.style.top = `${cartRect.top + cartRect.height/2}px`;
+        flyingImg.style.left = `${cartRect.left + cartRect.width/2}px`;
+        flyingImg.style.width = '20px';
+        flyingImg.style.height = '20px';
+        flyingImg.style.opacity = '0';
+
+        setTimeout(() => {
+            flyingImg.remove();
+            cartIcon.classList.add('jiggle');
+            setTimeout(() => cartIcon.classList.remove('jiggle'), 600);
+        }, 800);
+    }
+
+    // Call original handler
+    handleAddToCart(productId);
+}
+
+// Updated createProductCard (for script.js)
+function createProductCard(product) {
     const stockStatus = getStockStatus(product);
     const stockClass = getStockClass(product);
     const purchasable = canPurchase(product);
     const priceDisplay = typeof product.price === 'number' ? `£${product.price.toFixed(2)}` : product.price;
 
-    // Determine button HTML
-    let buttonHTML = '';
+    let actionHtml = '';
 
     if (!purchasable) {
-        buttonHTML = `<button class="btn-add" disabled>Unavailable</button>`;
+        actionHtml = `<div class="card-action-icon disabled" title="Unavailable">${ICONS.ban}</div>`;
     } else if (product.stock === 0 && product.preOrder) {
-        buttonHTML = `<button class="btn-add" onclick="handleAddToCart('${product.id}')">Pre-Order</button>`;
+        actionHtml = `<div class="card-action-icon" onclick="animateAndAdd(this, '${product.id}')" title="Pre-Order">${ICONS.basket}</div>`;
     } else if (product.stock === 0) {
-        buttonHTML = `<button class="btn-add" onclick="notifyMe('${product.title}')">Notify Me</button>`;
+        actionHtml = `<div class="card-action-icon" onclick="notifyMe('${product.title}')" title="Notify Me">${ICONS.bell}</div>`;
     } else if (product.stripePaymentLink) {
-        // Use Stripe Payment Link if available
-        buttonHTML = `<a href="${product.stripePaymentLink}" class="btn-add" target="_blank" rel="noopener" style="display: inline-block; text-align: center; text-decoration: none; line-height: 1.5;">Buy Now</a>`;
+        actionHtml = `<a href="${product.stripePaymentLink}" class="card-action-icon" target="_blank" rel="noopener" title="Buy Now">${ICONS.creditCard}</a>`;
     } else {
-        // Fallback to cart
-        buttonHTML = `<button class="btn-add" onclick="handleAddToCart('${product.id}')">Add to Cart</button>`;
+        actionHtml = `<div class="card-action-icon" onclick="animateAndAdd(this, '${product.id}')" title="Add to Cart">${ICONS.basket}</div>`;
     }
 
     // Add data-domain attributes for singles cards
@@ -893,12 +937,12 @@ createProductCard = function (product) {
                 <img src="${product.image}" alt="${product.title}" class="product-image">
                 <span class="category-tag">${getCategoryName(product.category)}</span>
             </div>
+            ${actionHtml}
             <div class="product-details">
                 <div class="stock-badge ${stockClass}">${stockStatus}</div>
                 <h3 class="product-title">${product.title}</h3>
                 <div class="product-price">${priceDisplay}</div>
-                ${buttonHTML}
             </div>
         </div>
     `;
-};
+}

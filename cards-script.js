@@ -481,3 +481,119 @@ function updateResultsCount(displayCount) {
 // Expose to window
 window.initCardSearch = initCardSearch;
 window.renderCards = renderCards;
+// ICONS (Duplicated for now, or could be shared if I refactor, but keeping self-contained is safer)
+const ICONS_CARDS = {
+    basket: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>`,
+    bell: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>`,
+    ban: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>`
+};
+
+function animateAndAddCard(btnElement, publicCode, name, price) {
+    // Start animation
+    const card = btnElement.closest('.product-card');
+    const img = card.querySelector('.product-image');
+    const cartIcon = document.getElementById('shopping-cart-icon');
+
+    if (img && cartIcon) {
+        const imgRect = img.getBoundingClientRect();
+        const cartRect = cartIcon.getBoundingClientRect();
+
+        const flyingImg = img.cloneNode();
+        flyingImg.classList.add('flying-card');
+        flyingImg.style.width = `${imgRect.width}px`;
+        flyingImg.style.height = `${imgRect.height}px`;
+        flyingImg.style.top = `${imgRect.top}px`;
+        flyingImg.style.left = `${imgRect.left}px`;
+
+        document.body.appendChild(flyingImg);
+
+        // Force reflow
+        void flyingImg.offsetWidth;
+
+        flyingImg.style.top = `${cartRect.top + cartRect.height/2}px`;
+        flyingImg.style.left = `${cartRect.left + cartRect.width/2}px`;
+        flyingImg.style.width = '20px';
+        flyingImg.style.height = '20px';
+        flyingImg.style.opacity = '0';
+
+        setTimeout(() => {
+            flyingImg.remove();
+            cartIcon.classList.add('jiggle');
+            setTimeout(() => cartIcon.classList.remove('jiggle'), 600);
+        }, 800);
+    }
+
+    // Call purchase handler
+    handleCardPurchase(publicCode, name, price);
+}
+
+// Override createCardElement
+createCardElement = function(card) {
+    const div = document.createElement('div');
+    div.className = 'product-card single-card';
+    div.setAttribute('data-product-id', card.id || card.publicCode);
+
+    // Add domain data attribute for CSS styling
+    const domains = card.domain?.values || [];
+    if (domains.length > 0) {
+        const domainId = domains[0]?.id || '';
+        if (domainId) {
+            div.setAttribute('data-domain', domainId);
+        }
+
+        // For dual-domain cards, add second domain
+        if (domains.length > 1) {
+            const domainId2 = domains[1]?.id || '';
+            if (domainId2) {
+                div.setAttribute('data-domain-2', domainId2);
+            }
+        }
+    }
+
+    // Extract data
+    const name = card.name || 'Unknown';
+    const imageUrl = card.cardImage?.url || '';
+    const publicCode = card.publicCode || card.id;
+
+    // Stock information
+    const stockStatus = getCardStockStatus(card);
+    const stockClass = getCardStockClass(card);
+    const purchasable = canPurchaseCard(card);
+
+    // Price - default to £0.50 for singles if not specified
+    const price = card.price !== undefined ? card.price : 0.50;
+    const priceDisplay = `£${price.toFixed(2)}`;
+
+    let actionHtml = '';
+    const safeName = name.replace(/'/g, "\\'");
+
+    if (!purchasable) {
+         actionHtml = `<div class="card-action-icon disabled" title="Unavailable">${ICONS_CARDS.ban}</div>`;
+    } else {
+        // Since singles are always add to cart or notify (stock based)
+        // Check stock
+        const stock = card.stock !== undefined ? card.stock : 0;
+        if (stock > 0) {
+            actionHtml = `<div class="card-action-icon" onclick="animateAndAddCard(this, '${publicCode}', '${safeName}', ${price})" title="Add to Cart">${ICONS_CARDS.basket}</div>`;
+        } else {
+             actionHtml = `<div class="card-action-icon" onclick="notifyMe('${safeName}')" title="Notify Me">${ICONS_CARDS.bell}</div>`;
+        }
+    }
+
+    // Build HTML
+    div.innerHTML = `
+    <div class="card-image-wrapper">
+        <img src="${imageUrl}" alt="${name}" class="product-image" loading="lazy">
+        <div class="tag-group">
+            <span class="category-tag">Single Card</span>
+            <span class="product-price-tag">${priceDisplay}</span>
+        </div>
+    </div>
+    ${actionHtml}
+    <div class="product-details">
+        <div class="stock-badge ${stockClass}">${stockStatus}</div>
+        <h3 class="product-title">${name}</h3>
+    </div>
+`;
+    return div;
+}

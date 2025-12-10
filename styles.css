@@ -543,7 +543,6 @@ nav {
     font-size: 1.4rem;
     color: var(--accent);
     font-weight: 700;
-    margin-bottom: 20px;
 }
 
 .btn-add {
@@ -566,7 +565,8 @@ nav {
     display: block;
     opacity: 0;
     transform: translateY(10px);
-    pointer-events: none; /* Prevent clicking when hidden */
+    pointer-events: none;
+    /* Prevent clicking when hidden */
 }
 
 .product-card:hover .btn-add {
@@ -1584,4 +1584,60 @@ label {
 /* Ensure the card maintains shape in flex/grid containers */
 .product-card.single-card {
     width: 100%;
+}
+
+
+/* --- CARD ACTION ICON --- */
+.card-action-icon {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    /* Fallback */
+    background: rgba(26, 29, 36, 0.8);
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 20;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.card-action-icon:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 140, 66, 0.6);
+}
+
+.card-action-icon.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: var(--text-muted);
+    color: var(--text-muted);
+}
+
+.card-action-icon.disabled:hover {
+    background: rgba(26, 29, 36, 0.8);
+    color: var(--text-muted);
+    transform: none;
+    box-shadow: none;
+}
+
+/* Flying Card Animation */
+.flying-card {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    opacity: 0.8;
+    box-shadow: 0 0 20px rgba(255, 140, 66, 0.5);
+    border-radius: 8px;
+    object-fit: cover;
 }
