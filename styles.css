@@ -378,6 +378,12 @@ nav {
 /* --- PRODUCT SEARCH --- */
 .search-container {
     animation: fadeIn 0.3s ease;
+    position: sticky;
+    top: 75px; /* Adjust based on nav height */
+    z-index: 99;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: linear-gradient(to bottom, var(--bg-dark), transparent);
 }
 
 @keyframes fadeIn {
@@ -1419,21 +1425,24 @@ label {
         align-items: center;
         padding: 10px;
         overflow-y: auto;
+        justify-content: flex-start; /* Start from top */
+        padding-top: 60px; /* Space for close button */
     }
 
     .modal-card-image {
         max-width: 90vw;
-        max-height: 50vh;
+        max-height: 40vh; /* Reduced height to fit info */
         margin-bottom: 20px;
+        object-fit: contain;
     }
 
     .modal-card-info {
         flex: 1;
-        position: absolute;
-        top: 31rem;
-        padding-right: 3rem;
-        padding-left: 3rem;
+        position: static; /* Removed absolute positioning */
+        padding: 20px;
         width: 100%;
+        max-height: none; /* Allow full height */
+        overflow-y: visible;
     }
 
     .modal-card-info h2 {
