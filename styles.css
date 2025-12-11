@@ -379,7 +379,8 @@ nav {
 .search-container {
     animation: fadeIn 0.3s ease;
     position: sticky;
-    top: 75px; /* Adjust based on nav height */
+    top: 108px;
+    /* Adjust based on nav height */
     z-index: 99;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -1425,23 +1426,28 @@ label {
         align-items: center;
         padding: 10px;
         overflow-y: auto;
-        justify-content: flex-start; /* Start from top */
-        padding-top: 60px; /* Space for close button */
+        justify-content: flex-start;
+        /* Start from top */
+        padding-top: 60px;
+        /* Space for close button */
     }
 
     .modal-card-image {
         max-width: 90vw;
-        max-height: 40vh; /* Reduced height to fit info */
+        max-height: 40vh;
+        /* Reduced height to fit info */
         margin-bottom: 20px;
         object-fit: contain;
     }
 
     .modal-card-info {
         flex: 1;
-        position: static; /* Removed absolute positioning */
+        position: static;
+        /* Removed absolute positioning */
         padding: 20px;
         width: 100%;
-        max-height: none; /* Allow full height */
+        max-height: none;
+        /* Allow full height */
         overflow-y: visible;
     }
 
@@ -1488,7 +1494,7 @@ label {
     }
 
     .modal-card-image {
-        max-width: 95vw;
+        padding-top: 30px max-width: 95vw;
         max-height: 45vh;
         border-radius: 12px;
     }
