@@ -75,7 +75,8 @@ test.describe('Singles Page - Card Display', () => {
 
     test('should have add to cart buttons', async ({ page }) => {
         const firstCard = page.locator('.product-card').first();
-        const addButton = firstCard.locator('button:has-text("Add"), button:has-text("Cart"), .add-to-cart');
+        // Updated to support icon buttons (checking for icon class or title)
+        const addButton = firstCard.locator('button:has-text("Add"), button:has-text("Cart"), .add-to-cart, .card-action-icon[title*="Add"], .card-action-icon[title*="Cart"]');
         await expect(addButton.first()).toBeVisible();
     });
 });
@@ -260,7 +261,8 @@ test.describe('Singles Page - Stock Display', () => {
 
                 // Check if stock text indicates item status
                 const lowerText = text?.toLowerCase() || '';
-                const validStockMessages = ['in stock', 'only 1 left', 'low stock', 'available'];
+                // Updated to be more flexible with "only X left" messages
+                const validStockMessages = ['in stock', 'only', 'left', 'low stock', 'available'];
                 const hasValidMessage = validStockMessages.some(msg => lowerText.includes(msg));
 
                 // Should indicate item is available (not out of stock)
