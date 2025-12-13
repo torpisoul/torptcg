@@ -168,6 +168,23 @@
         <a href="index.html" class="btn-primary">Continue Shopping</a>
     </div>
 
+    <script>
+        // Clear the basket after successful checkout
+        document.addEventListener('DOMContentLoaded', function () {
+            // Clear basket from localStorage
+            localStorage.removeItem('torptcg_basket');
+            console.log('✓ Basket cleared after successful checkout');
+
+            // Get session ID from URL if present (for future order tracking)
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+            if (sessionId) {
+                console.log('Order session:', sessionId);
+                // Could fetch order details from Stripe here in the future
+            }
+        });
+    </script>
+
     <footer
         style="margin-top: 100px; text-align: center; padding: 40px 20px; border-top: 1px solid var(--glass-border);">
         <p style="color: var(--text-muted);">&copy; 2024 TorpTCG. All rights reserved.</p>

@@ -441,10 +441,15 @@
                 const invRes = await fetch('/.netlify/functions/inventory');
                 if (invRes.ok) {
                     const inventory = await invRes.json();
-                    // Create stock map
+                    // Create stock and price maps
                     const stockMap = {};
                     inventory.forEach(item => {
-                        stockMap[item.productId || item.id] = item.stock;
+                        const itemId = item.productId || item.id;
+                        stockMap[itemId] = item.stock;
+                        // Store price in cardPrices object
+                        if (item.price !== undefined) {
+                            cardPrices[itemId] = item.price;
+                        }
                     });
 
                     // Merge stock
@@ -452,30 +457,6 @@
                         ...card,
                         stock: stockMap[card.id] || 0
                     }));
-                }
-
-                // Load prices
-                // Mocking price data load since we created the file locally but can't fetch it easily
-                // in this mocked dev environment without a proper backend route.
-                // In production, this would be a fetch to a JSONBin or API endpoint.
-                try {
-                    // Simulating a fetch to our local mock file
-                    // Note: This fetch will fail in netlify dev if not configured as static asset
-                    // So we might need to fallback to dummy data for demo
-                    // const priceRes = await fetch('/current-prices.json');
-                    // if (priceRes.ok) {
-                    //    cardPrices = await priceRes.json();
-                    // }
-
-                    // Fallback mock data for demo if fetch fails
-                    cardPrices = {
-                        'ogn-076-298': 16.35,
-                        'ogs-004-024': 5.66,
-                        'ogn-001-298': 50.98,
-                        'ogn-123-298': 3.06
-                    };
-                } catch (e) {
-                    console.warn('Could not load prices', e);
                 }
 
                 console.log('Loaded ' + adminCards.length + ' cards');
@@ -596,13 +577,17 @@
                 const cardCode = card.publicCode || card.id;
                 const cardId = card.id;
 
-                // Price display
-                const price = cardPrices[cardId] ? `£${cardPrices[cardId].toFixed(2)}` : '£0.50';
+                // Price - get from stored prices or default to 0.50
+                const priceValue = cardPrices[cardId] !== undefined ? cardPrices[cardId] : 0.50;
 
                 div.innerHTML = '<div class="card-preview"><img src="' + imageUrl + '" alt="' + cardName + '" loading="lazy"></div>' +
                     '<div class="card-name">' + cardName + '</div>' +
                     '<div class="card-code">' + cardCode + '</div>' +
-                    '<div class="card-price-display">' + price + '</div>' +
+                    '<div class="stock-label">Price (£)</div>' +
+                    '<div class="stock-control price-control">' +
+                    '<span style="color: #00b894; font-weight: 700; margin-right: 5px;">£</span>' +
+                    '<input type="number" class="stock-input price-input" step="0.01" min="0" value="' + priceValue.toFixed(2) + '" onchange="setPrice(\'' + cardId + '\', this.value)">' +
+                    '</div>' +
                     '<div class="stock-label">Stock Level</div>' +
                     '<div class="stock-control">' +
                     '<button class="stock-btn" onclick="adjustStock(\'' + cardId + '\', \'decrement\')">−</button>' +
@@ -711,6 +696,49 @@
                     alert('Failed to update stock. Please try again.');
                 }
                 throw error;
+            }
+        }
+
+        async function setPrice(cardId, value) {
+            const price = parseFloat(value) || 0.50;
+            const binId = getBinIdForCard(cardId);
+            const card = adminCards.find(c => c.id === cardId);
+            const stock = card ? (card.stock || 0) : 0;
+
+            console.log(`[setPrice] Saving ${cardId} with price £${price.toFixed(2)}`);
+
+            if (!binId) {
+                alert('Error: Could not determine bin ID for this card.');
+                return;
+            }
+
+            // Save price along with current stock
+            const payload = {
+                productId: cardId,
+                stock: stock,
+                price: price,
+                action: 'set',
+                binId: binId,
+                category: 'singles'
+            };
+
+            try {
+                const response = await fetch('/.netlify/functions/inventory', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (response.ok) {
+                    showSaveIndicator('✓ Price updated');
+                    // Update local state
+                    cardPrices[cardId] = price;
+                } else {
+                    const err = await response.json();
+                    alert('Error: ' + (err.error || 'Failed to update price'));
+                }
+            } catch (error) {
+                console.error('Error setting price:', error);
+                alert('Failed to update price. Please try again.');
             }
         }
 

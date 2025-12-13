@@ -36,22 +36,29 @@ async function fetchCards() {
             if (inventoryResponse.ok) {
                 const inventory = await inventoryResponse.json();
 
-                // Create inventory map
+                // Create inventory map with stock AND price
                 const inventoryMap = {};
                 inventory.forEach(item => {
                     if (item.id) {
-                        inventoryMap[item.id] = item.stock;
+                        inventoryMap[item.id] = {
+                            stock: item.stock,
+                            price: item.price
+                        };
                     }
                 });
 
-                // Merge stock data into cards
+                // Merge stock and price data into cards
                 cards = cards.map(card => {
-                    // Default to 0 stock if missing from inventory (aligns with Master Inventory behavior where 0-stock items are removed)
-                    let stock = inventoryMap[card.id] !== undefined ? inventoryMap[card.id] : 0;
+                    const invData = inventoryMap[card.id];
+                    // Default to 0 stock if missing from inventory
+                    let stock = invData ? invData.stock : 0;
+                    // Use price from inventory if available, otherwise keep card's price or default to 0.50
+                    let price = invData?.price !== undefined ? invData.price : (card.price !== undefined ? card.price : 0.50);
 
                     return {
                         ...card,
-                        stock
+                        stock,
+                        price
                     };
                 });
             }
@@ -510,8 +517,8 @@ function animateAndAddCard(btnElement, publicCode, name, price) {
         // Force reflow
         void flyingImg.offsetWidth;
 
-        flyingImg.style.top = `${cartRect.top + cartRect.height/2}px`;
-        flyingImg.style.left = `${cartRect.left + cartRect.width/2}px`;
+        flyingImg.style.top = `${cartRect.top + cartRect.height / 2}px`;
+        flyingImg.style.left = `${cartRect.left + cartRect.width / 2}px`;
         flyingImg.style.width = '20px';
         flyingImg.style.height = '20px';
         flyingImg.style.opacity = '0';
@@ -528,7 +535,7 @@ function animateAndAddCard(btnElement, publicCode, name, price) {
 }
 
 // Override createCardElement
-createCardElement = function(card) {
+createCardElement = function (card) {
     const div = document.createElement('div');
     div.className = 'product-card single-card';
     div.setAttribute('data-product-id', card.id || card.publicCode);
@@ -568,7 +575,7 @@ createCardElement = function(card) {
     const safeName = name.replace(/'/g, "\\'");
 
     if (!purchasable) {
-         actionHtml = `<div class="card-action-icon disabled" title="Unavailable">${ICONS_CARDS.ban}</div>`;
+        actionHtml = `<div class="card-action-icon disabled" title="Unavailable">${ICONS_CARDS.ban}</div>`;
     } else {
         // Since singles are always add to cart or notify (stock based)
         // Check stock
@@ -576,7 +583,7 @@ createCardElement = function(card) {
         if (stock > 0) {
             actionHtml = `<div class="card-action-icon" onclick="animateAndAddCard(this, '${publicCode}', '${safeName}', ${price})" title="Add to Cart">${ICONS_CARDS.basket}</div>`;
         } else {
-             actionHtml = `<div class="card-action-icon" onclick="notifyMe('${safeName}')" title="Notify Me">${ICONS_CARDS.bell}</div>`;
+            actionHtml = `<div class="card-action-icon" onclick="notifyMe('${safeName}')" title="Notify Me">${ICONS_CARDS.bell}</div>`;
         }
     }
 

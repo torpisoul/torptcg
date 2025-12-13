@@ -111,7 +111,16 @@ exports.handler = async function (event, context) {
                         // Normalize properties for frontend
                         const title = product.title || product.name;
                         const image = product.image || (product.cardImage ? product.cardImage.url : '');
-                        const price = product.price !== undefined ? product.price : 0; // Cards might not have price yet
+
+                        // Price priority: master inventory price > product bin price > default (0.50 for singles)
+                        let price = 0;
+                        if (invItem.price !== undefined && invItem.price !== null) {
+                            price = invItem.price;
+                        } else if (product.price !== undefined) {
+                            price = product.price;
+                        } else if (invItem.category === 'singles') {
+                            price = 0.50; // Default price for singles
+                        }
 
                         return {
                             ...product,
@@ -234,13 +243,22 @@ exports.handler = async function (event, context) {
 
                 console.log(`[INVENTORY] Added ${body.product.id} to master inventory`);
             }
-            // Handle 'set' action (Stock Update Only)
+            // Handle 'set' action (Stock and Price Update)
             else if (action === 'set' && stock !== undefined) {
                 if (itemIndex >= 0) {
                     // Update existing item
                     const oldStock = inventory[itemIndex].stock;
                     const oldBinId = inventory[itemIndex].binId;
                     inventory[itemIndex].stock = parseInt(stock);
+
+                    // Update price if provided
+                    if (body.price !== undefined) {
+                        const oldPrice = inventory[itemIndex].price;
+                        inventory[itemIndex].price = parseFloat(body.price);
+                        if (oldPrice !== body.price) {
+                            console.log(`[INVENTORY] Updated ${productId} price: ${oldPrice} → ${body.price}`);
+                        }
+                    }
 
                     // Update binId if provided (important for dual-domain cards that may have been miscategorized)
                     if (body.binId) {
@@ -272,10 +290,11 @@ exports.handler = async function (event, context) {
                         binId: body.binId,
                         category: body.category,
                         stock: parseInt(stock),
+                        price: body.price !== undefined ? parseFloat(body.price) : 0.50,
                         preOrder: body.preOrder || false
                     });
 
-                    console.log(`[INVENTORY] Added ${productId} with stock ${stock}`);
+                    console.log(`[INVENTORY] Added ${productId} with stock ${stock} and price ${body.price || 0.50}`);
                 }
             }
             // Handle 'delete' action

@@ -376,6 +376,16 @@ async function handleAddToCart(productId) {
     }
 }
 
+// Handle add to cart from modal - adds item and closes modal
+async function handleModalAddToCart(productId) {
+    await handleAddToCart(productId);
+
+    // Close the modal after a brief moment to show feedback
+    setTimeout(() => {
+        closeCardModal();
+    }, 500);
+}
+
 // ============================================
 // 6. 3D TILT EFFECT
 // ============================================
@@ -760,7 +770,7 @@ function openCardModal(product) {
     // Add action buttons
     infoHTML += `<div class="modal-actions">`;
     if (stock > 0) {
-        infoHTML += `<button class="btn" onclick="handleAddToCart('${product.id || product.publicCode}')">Add to Cart</button>`;
+        infoHTML += `<button class="btn" onclick="handleModalAddToCart('${product.id || product.publicCode}')">Add to Cart</button>`;
     } else {
         infoHTML += `<button class="btn-secondary btn" onclick="notifyMe('${title}')">Notify When Available</button>`;
     }
@@ -878,8 +888,8 @@ function animateAndAdd(btnElement, productId) {
         // Force reflow
         void flyingImg.offsetWidth;
 
-        flyingImg.style.top = `${cartRect.top + cartRect.height/2}px`;
-        flyingImg.style.left = `${cartRect.left + cartRect.width/2}px`;
+        flyingImg.style.top = `${cartRect.top + cartRect.height / 2}px`;
+        flyingImg.style.left = `${cartRect.left + cartRect.width / 2}px`;
         flyingImg.style.width = '20px';
         flyingImg.style.height = '20px';
         flyingImg.style.opacity = '0';
