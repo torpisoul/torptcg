@@ -41,14 +41,9 @@
 
     <!-- HERO SECTION -->
     <div class="hero">
+        <div id="hero-background-animation" class="hero-bg-animation"></div>
         <h1>Enter the Rift</h1>
         <p>The UK's Premier Destination for Riftbound TCG, Sealed Product, and Bespoke 3D Accessories.</p>
-        <a href="#products" class="btn">Explore the Collection</a>
-    </div>
-
-    <!-- MAIN PRODUCT SECTION -->
-    <div class="container" id="products">
-        <h2 class="section-title">Products</h2>
 
         <!-- Filter Buttons -->
         <div class="filters">
@@ -58,7 +53,10 @@
             <button class="filter-btn" onclick="filterProducts('accessories')">Accessories</button>
             <button class="filter-btn" onclick="filterProducts('prints')">3D Prints</button>
         </div>
+    </div>
 
+    <!-- MAIN PRODUCT SECTION -->
+    <div class="container" id="products">
         <!-- Search Bar -->
         <div class="search-container" style="max-width: 600px; margin: 20px auto;">
             <input type="search" id="product-search" class="search-input" placeholder="Search products by name or ID..."
@@ -331,6 +329,7 @@
 
     <script src="basket-script.js"></script>
     <script src="script.js"></script>
+    <script src="hero-animation.js"></script>
     <script src="cards-script.js"></script>
     <script src="cart-drag-drop.js"></script>
     <script>

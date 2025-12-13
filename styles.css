@@ -257,6 +257,56 @@ nav {
     bottom: 0;
     background: radial-gradient(circle, transparent 0%, var(--bg-dark) 90%);
     pointer-events: none;
+    z-index: 1; /* Overlay above animation but below text */
+}
+
+/* Hero Background Animation */
+.hero-bg-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 0;
+    opacity: 0.4; /* Subtle effect */
+    pointer-events: none;
+}
+
+.hero-floater {
+    position: absolute;
+    width: 120px;
+    height: 168px; /* Card ratio roughly */
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(255, 140, 66, 0.3);
+    opacity: 0.7;
+    animation: floatAround infinite linear;
+    filter: blur(1px);
+}
+
+.hero-floater.fallback-floater {
+    background: linear-gradient(135deg, var(--primary), var(--bg-card));
+    border: 1px solid var(--primary);
+}
+
+@keyframes floatAround {
+    0% {
+        transform: translate(0, 0) rotate(0deg) scale(0.8);
+    }
+    25% {
+        transform: translate(100px, -50px) rotate(10deg) scale(0.9);
+    }
+    50% {
+        transform: translate(50px, 100px) rotate(-5deg) scale(0.8);
+    }
+    75% {
+        transform: translate(-50px, 50px) rotate(5deg) scale(0.9);
+    }
+    100% {
+        transform: translate(0, 0) rotate(0deg) scale(0.8);
+    }
 }
 
 .hero h1 {
@@ -351,28 +401,36 @@ nav {
     display: flex;
     justify-content: center;
     gap: 15px;
-    margin-bottom: 50px;
+    margin-top: 30px; /* Added margin-top for spacing below text */
+    margin-bottom: 0;
     flex-wrap: wrap;
+    z-index: 2; /* Ensure filters are above hero background/overlay */
+    position: relative;
 }
 
 .filter-btn {
-    background: transparent;
+    background: rgba(15, 17, 21, 0.6); /* Slightly darker background for better visibility on hero image */
+    backdrop-filter: blur(5px);
     border: 1px solid var(--glass-border);
-    color: var(--text-muted);
-    padding: 10px 25px;
+    color: var(--text-main); /* Brighter text for better contrast */
+    padding: 12px 30px; /* Slightly larger clickable area */
     border-radius: 30px;
     cursor: pointer;
     transition: all 0.3s;
     font-family: 'Inter', sans-serif;
     margin-bottom: unset;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .filter-btn:hover,
 .filter-btn.active {
-    background: var(--glass-bg);
-    border-color: var(--primary);
+    background: var(--gradient-main); /* Use the gradient for active state to make it pop */
+    border-color: transparent;
     color: white;
-    box-shadow: 0 0 15px rgba(255, 140, 66, 0.2);
+    box-shadow: 0 10px 20px rgba(255, 140, 66, 0.3);
+    transform: translateY(-2px);
 }
 
 /* --- PRODUCT SEARCH --- */

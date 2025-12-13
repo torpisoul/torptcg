@@ -514,6 +514,12 @@ function filterProducts(category) {
         // Render standard products
         renderProducts(category);
     }
+
+    // Scroll to products section
+    const productsSection = document.getElementById('products');
+    if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth' });
+    }
 }
 
 function toggleCardSearch() {
